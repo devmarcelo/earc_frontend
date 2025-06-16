@@ -1,0 +1,13 @@
+{
+  "welcome": "Bienvenido a eARC",
+  "dashboard": "Panel",
+  "financial": "Financiero",
+  "inventory": "Inventario",
+  "hr": "RRHH",
+  "reports": "Informes",
+  "settings": "Configuración",
+  "logout": "Cerrar sesión",
+  "login": "Iniciar sesión",
+  "email": "Correo electrónico",
+  "password": "Contraseña"
+}

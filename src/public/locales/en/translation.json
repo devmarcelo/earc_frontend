@@ -1,0 +1,13 @@
+{
+  "welcome": "Welcome to eARC",
+  "dashboard": "Dashboard",
+  "financial": "Financial",
+  "inventory": "Inventory",
+  "hr": "HR",
+  "reports": "Reports",
+  "settings": "Settings",
+  "logout": "Logout",
+  "login": "Login",
+  "email": "Email",
+  "password": "Password"
+}
