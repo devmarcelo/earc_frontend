@@ -2,7 +2,7 @@
 
 O eARC é um sistema web multitenant responsivo desenvolvido para pequenos negócios locais.
 
-# React + TypeScript + Vite
+# React + TypeScript + Tailwind
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
