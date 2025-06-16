@@ -6,6 +6,7 @@ interface AuditInfoProps {
   auditData: AuditFields;
   showCreatedBy?: boolean;
   showUpdatedBy?: boolean;
+  showTenantId?: boolean;
   compact?: boolean;
   className?: string;
 }
@@ -14,6 +15,7 @@ const AuditInfo: React.FC<AuditInfoProps> = ({
   auditData,
   showCreatedBy = true,
   showUpdatedBy = true,
+  showTenantId = false,
   compact = false,
   className = "",
 }) => {
@@ -53,6 +55,9 @@ const AuditInfo: React.FC<AuditInfoProps> = ({
               ` por ${formatUser(auditData.updated_by)}`}
           </div>
         )}
+        {showTenantId && auditData.tenant_id && (
+          <div>Tenant ID: {auditData.tenant_id}</div>
+        )}
       </div>
     );
   }
@@ -91,6 +96,12 @@ const AuditInfo: React.FC<AuditInfoProps> = ({
                 {formatUser(auditData.updated_by)}
               </>
             )}
+          </div>
+        )}
+        {showTenantId && auditData.tenant_id && (
+          <div className="col-span-full">
+            <span className="font-medium">Tenant ID:</span>{" "}
+            {auditData.tenant_id}
           </div>
         )}
       </div>

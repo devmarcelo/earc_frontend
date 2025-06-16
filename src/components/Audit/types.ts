@@ -4,6 +4,7 @@ export interface AuditFields {
   updated_at: string;
   created_by?: number | string;
   updated_by?: number | string;
+  tenant_id?: number;
 }
 
 // Interface base para entidades auditáveis
