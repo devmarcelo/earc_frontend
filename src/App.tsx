@@ -3,16 +3,9 @@ import { useTranslation } from "react-i18next";
 import React from "react"; // Import React
 import { useAuth } from "./contexts/AuthContext";
 import MainLayout from "./components/Layout/MainLayout"; // Import MainLayout
+import LoginPage from "./pages/LoginPage";
 
 // Placeholder Pages (Create these components later in src/pages/)
-const LoginPage = () => {
-  const { t } = useTranslation();
-  return (
-    <div className="p-4">
-      {t("login")} Page Placeholder - Implement form and API call
-    </div>
-  );
-};
 const DashboardPage = () => {
   const { t } = useTranslation();
   return (
