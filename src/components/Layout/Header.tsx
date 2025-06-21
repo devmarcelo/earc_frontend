@@ -26,7 +26,19 @@ const Header: React.FC = () => {
         {/* Logo will be applied via background image */}
       </div>
       <div className="flex items-center space-x-4">
-        <span>{user ? `${t("welcome")}, ${user.email}` : t("welcome")}</span>
+        {/* Imagem do usuário */}
+        {user?.imagem && (
+          <img
+            src={user.imagem}
+            alt="Avatar do usuário"
+            className="h-10 w-10 rounded-full object-cover"
+          />
+        )}
+        <span className="font-medium text-gray-800">
+          {user
+            ? `${t("welcome")}, ${user?.apelido || user.email}`
+            : t("welcome")}
+        </span>
         {/* Language Switcher Placeholder */}
         <div>
           {/* Implement language switcher dropdown later */}
