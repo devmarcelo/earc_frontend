@@ -88,7 +88,7 @@ const LoginPage: React.FC = () => {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
-              {t("email")}
+              {t("email", { defaultValue: "E-mail" })}
             </label>
             <input
               id="email"
@@ -110,7 +110,7 @@ const LoginPage: React.FC = () => {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"
             >
-              {t("password")}
+              {t("password", { defaultValue: "Senha" })}
             </label>
             <input
               id="password"
@@ -182,7 +182,7 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-1 gap-3">
             <button
               type="button"
               className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
@@ -208,6 +208,7 @@ const LoginPage: React.FC = () => {
               <span className="ml-2">Google</span>
             </button>
 
+            {/* Botão do GitHub desativado
             <button
               type="button"
               className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
@@ -217,7 +218,20 @@ const LoginPage: React.FC = () => {
               </svg>
               <span className="ml-2">GitHub</span>
             </button>
+            */}
           </div>
+        </div>
+
+        {/* Link para cadastro de empresa */}
+        <div className="mt-4 text-center">
+          <a
+            href="/register-company"
+            className="text-indigo text-sm hover:underline"
+          >
+            {t("register_company", {
+              defaultValue: "Não possui uma conta? Cadastre sua empresa.",
+            })}
+          </a>
         </div>
       </div>
     </div>
