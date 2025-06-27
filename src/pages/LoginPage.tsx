@@ -224,14 +224,19 @@ const LoginPage: React.FC = () => {
 
         {/* Link para cadastro de empresa */}
         <div className="mt-4 text-center">
-          <a
-            href="/register-company"
-            className="text-indigo text-sm hover:underline"
-          >
-            {t("register_company", {
-              defaultValue: "Não possui uma conta? Cadastre sua empresa.",
-            })}
-          </a>
+          <p className="text-sm text-gray-600">
+            {t("dont_have_account", {
+              defaultValue: "Não possui uma conta?",
+            })}{" "}
+            <button
+              onClick={() => navigate("/register-company")}
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              {t("register_company", {
+                defaultValue: "Cadastre sua empresa",
+              })}
+            </button>
+          </p>
         </div>
       </div>
     </div>
