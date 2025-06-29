@@ -1,32 +1,54 @@
 import { useTranslation } from "react-i18next";
 import { FormField } from "../../Shared";
-import { useCep } from "../../../hooks";
-import type { AddressFormProps } from "../../../@types";
+import { useCep } from "../../../hooks/useCep";
+import type { AddressFormProps, CepApiResponse } from "../../../@types";
+import { batchUpdateFormData } from "../../../utils/batchUpdateFormData";
+import { useState } from "react";
 
 const AddressForm: React.FC<AddressFormProps> = ({
   formData,
+  setFormData,
   onChange,
   onNext,
   onPrevious,
 }) => {
   const { t } = useTranslation();
-  const {
-    isLoading: isLoadingCep,
-    error: cepError,
-    handleCepChange,
-    validateCep,
-  } = useCep();
+  const [cep, setCep] = useState("");
+
+  const { fetchCep, isLoading, error } = useCep((address) => {
+    batchUpdateFormData(
+      {
+        cep: address.cep,
+        endereco: address.logradouro,
+        bairro: address.bairro,
+        cidade: address.localidade,
+        estado: address.uf,
+      },
+      formData,
+      setFormData,
+    );
+  });
+
+  const handleChangeCep = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    const formatted = raw.replace(/\D/g, "").replace(/(\d{5})(\d{3})/, "$1-$2");
+    setCep(formatted);
+
+    setFormData({
+      ...formData,
+      cep: formatted,
+    });
+
+    if (formatted.length === 9) {
+      fetchCep(formatted);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (onNext) {
       onNext();
     }
-  };
-
-  // Wrapper para handleCepChange do hook
-  const onCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleCepChange(e, onChange);
   };
 
   return (
@@ -51,11 +73,11 @@ const AddressForm: React.FC<AddressFormProps> = ({
             label={t("cep", { defaultValue: "CEP" })}
             placeholder="00000-000"
             value={formData.cep}
-            onChange={onCepChange}
+            onChange={handleChangeCep}
             required
-            customValidation={validateCep}
+            maxlength={9}
           />
-          {isLoadingCep && (
+          {isLoading && (
             <div className="absolute top-8 right-3 flex items-center">
               <svg
                 className="h-4 w-4 animate-spin text-indigo-600"
@@ -78,7 +100,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
               </svg>
             </div>
           )}
-          {cepError && (
+          {error && (
             <div className="mt-1 flex items-center text-sm text-red-600">
               <svg
                 className="mr-1 h-4 w-4 flex-shrink-0"
@@ -91,7 +113,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
                   clipRule="evenodd"
                 />
               </svg>
-              <span>{cepError}</span>
+              <span>{error}</span>
             </div>
           )}
         </div>
@@ -200,6 +222,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             {onNext && (
               <button
                 type="submit"
+                onClick={onNext}
                 className="ml-auto rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
               >
                 {t("next_step", { defaultValue: "Próximo Passo" })}

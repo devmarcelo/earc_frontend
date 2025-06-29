@@ -4,7 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Stepper from "../components/Wizard/Stepper";
 import { CompanyForm, UserAdminForm, AddressForm } from "../components/Forms";
-import type { ImageData, RegistrationFormData } from "../@types";
+import type {
+  AddressFormData,
+  ImageData,
+  RegistrationFormData,
+} from "../@types";
 
 export default function RegisterCompany() {
   const { t } = useTranslation();
@@ -50,6 +54,13 @@ export default function RegisterCompany() {
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
+  };
+
+  const setAddressFormData = (updates: Partial<AddressFormData>) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...updates,
+    }));
   };
 
   const handleLogoChange = (imageData: ImageData) => {
@@ -236,6 +247,7 @@ export default function RegisterCompany() {
             pais: formData.pais,
           }}
           onChange={handleChange}
+          setFormData={setAddressFormData}
         />
       ),
       //validate: validateAddressStep,

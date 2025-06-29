@@ -48,6 +48,7 @@ export interface UserAdminFormProps extends BaseFormProps<UserAdminFormData> {
 }
 
 export interface AddressFormProps extends BaseFormProps<AddressFormData> {
+  setFormData: (data: Partial<AddressFormData>) => void;
   onNext?: () => void;
   onPrevious?: () => void;
 }

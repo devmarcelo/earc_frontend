@@ -16,6 +16,7 @@ interface FormFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   minLength?: number;
+  maxlength?: number;
   pattern?: string;
   className?: string;
   helpText?: string;
@@ -32,6 +33,7 @@ const FormField: React.FC<FormFieldProps> = ({
   onChange,
   required = false,
   minLength,
+  maxlength,
   pattern,
   className = "",
   helpText,
@@ -119,6 +121,7 @@ const FormField: React.FC<FormFieldProps> = ({
         onBlur={handleBlur}
         required={required}
         minLength={minLength}
+        maxLength={maxlength}
         pattern={pattern}
         className={`mt-1 block w-full rounded-md px-3 py-2 shadow-sm transition-colors focus:ring-1 focus:outline-none ${
           hasError
