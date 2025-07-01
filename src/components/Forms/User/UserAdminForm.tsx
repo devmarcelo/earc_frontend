@@ -7,7 +7,6 @@ import type { UserAdminFormProps, ImageData } from "../../../@types";
 const UserAdminForm: React.FC<UserAdminFormProps> = ({
   formData,
   onChange,
-  loading = false,
   error,
   onImageChange,
 }) => {

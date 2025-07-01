@@ -1,34 +1,48 @@
 // src/hooks/useModal.ts
 import { useState } from "react";
-
-type ModalMode = "add" | "edit";
-
-interface ModalState<T = any> {
-  isOpen: boolean;
-  mode: ModalMode;
-  data?: T | null;
-}
+import type { ModalState, ModalMode, ModalOptions } from "../@types/modals";
 
 export function useModal<T = any>() {
   const [modalState, setModalState] = useState<ModalState<T>>({
     isOpen: false,
     mode: "add",
     data: null,
+    config: {
+      type: "form",
+      size: "md",
+      showCloseButton: true,
+      showActionButtons: true,
+    },
   });
 
   const [onCloseCallback, setOnCloseCallback] = useState<(() => void) | null>(
     null,
   );
 
-  const openModal = (mode: ModalMode, data: T | null = null) => {
-    setModalState({ isOpen: true, mode, data });
+  const openModal = (
+    mode: ModalMode,
+    data: T | null = null,
+    configOverrides: ModalOptions = {},
+  ) => {
+    setModalState((prev) => ({
+      ...prev,
+      isOpen: true,
+      mode,
+      data,
+      config: { ...prev.config, ...configOverrides },
+    }));
   };
 
   const closeModal = () => {
-    setModalState({ isOpen: false, mode: "add", data: null });
+    setModalState((prev) => ({
+      ...prev,
+      isOpen: false,
+      mode: "add",
+      data: null,
+    }));
     if (onCloseCallback) {
       onCloseCallback();
-      setOnCloseCallback(null); // reseta para não disparar novamente
+      setOnCloseCallback(null);
     }
   };
 

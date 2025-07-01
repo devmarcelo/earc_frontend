@@ -1,42 +1,28 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ImageUploadModal, FormField } from "../../Shared";
+import { FormField, ImageUploadModal } from "../../Shared";
 import type { CompanyFormProps, ImageData } from "../../../@types";
 
 const CompanyForm: React.FC<CompanyFormProps> = ({
   formData,
   onChange,
   onNext,
-  onImageChange,
 }) => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onNext) {
-      onNext();
-    }
-  };
-
   const handleImageSelect = (imageData: ImageData) => {
-    // Update form data with image information
-    if (onImageChange) {
-      onImageChange(imageData);
-    } else {
-      // Fallback: create synthetic event for logo URL
-      const syntheticEvent = {
-        target: {
-          name: "logo",
-          value: imageData.url,
-        },
-      } as React.ChangeEvent<HTMLInputElement>;
-      onChange(syntheticEvent);
-    }
+    const syntheticEvent = {
+      target: {
+        name: "logo",
+        value: imageData.url,
+      },
+    } as React.ChangeEvent<HTMLInputElement>;
+    onChange(syntheticEvent);
     setIsModalOpen(false);
   };
 
-  const handleRemoveLogo = () => {
+  const handleRemoveImage = () => {
     const syntheticEvent = {
       target: {
         name: "logo",
@@ -44,11 +30,11 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
       },
     } as React.ChangeEvent<HTMLInputElement>;
     onChange(syntheticEvent);
+  };
 
-    // Also clear file data if using onImageChange
-    if (onImageChange) {
-      onImageChange({ url: "", type: "url" });
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (onNext) onNext();
   };
 
   return (
@@ -92,38 +78,34 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
           pattern="^[a-z0-9]+$"
         />
 
-        {/* Logo Upload Section */}
         <div>
           <label
             htmlFor="logo"
-            className="ml-1 block text-left text-sm font-medium text-gray-700"
+            className="ml-2 block text-left text-sm font-medium text-gray-700"
           >
             {t("company_logo", { defaultValue: "Logo da Empresa" })}
           </label>
 
-          {/* Logo Preview */}
           {formData.logo ? (
             <div className="mt-2">
               <div className="relative inline-block">
                 <img
                   src={formData.logo}
                   alt="Logo preview"
-                  className="h-24 w-24 rounded-lg border border-gray-300 bg-gray-50 object-contain"
+                  className="h-20 w-20 rounded-md border border-gray-300 bg-gray-50 object-contain"
                   onError={(e) => {
-                    // Handle broken image
                     const target = e.target as HTMLImageElement;
-                    target.src =
-                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBzdHJva2U9IiM5Q0E0QUYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=";
+                    target.src = "";
                   }}
                 />
                 <button
                   type="button"
-                  onClick={handleRemoveLogo}
-                  className="absolute -top-2 -right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
-                  title={t("remove_logo", { defaultValue: "Remover logo" })}
+                  onClick={handleRemoveImage}
+                  className="absolute -top-1 -right-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                  title={t("remove_image", { defaultValue: "Remover logo" })}
                 >
                   <svg
-                    className="h-4 w-4"
+                    className="h-3 w-3"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -148,12 +130,11 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
               </div>
             </div>
           ) : (
-            /* Upload Button */
             <div className="mt-2">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
-                className="flex w-full items-center justify-center rounded-md border-2 border-dashed border-gray-300 px-6 py-4 text-sm font-medium text-gray-600 hover:border-gray-400 hover:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
+                className="flex w-full items-center justify-center rounded-md border-2 border-dashed border-gray-300 px-6 py-3 text-sm font-medium text-gray-600 hover:border-gray-400 hover:text-gray-700"
               >
                 <svg
                   className="mr-2 h-5 w-5"
@@ -168,31 +149,38 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
                     d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                   />
                 </svg>
-                {t("add_logo", { defaultValue: "Adicionar logo da empresa" })}
+                {t("add_logo", {
+                  defaultValue: "Adicionar logo da empresa",
+                })}
               </button>
             </div>
           )}
         </div>
 
+        <ImageUploadModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onImageSelect={handleImageSelect}
+          currentImage={formData.logo}
+          title={t("select_logo", {
+            defaultValue: "Selecionar Logo da Empresa",
+          })}
+          acceptedFormats="PNG, JPG, GIF"
+          maxSizeText="até 2MB"
+          maxSizeMB={2}
+        />
+
         {onNext && (
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
+              className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
             >
               {t("next_step", { defaultValue: "Próximo Passo" })}
             </button>
           </div>
         )}
       </form>
-
-      {/* Image Upload Modal */}
-      <ImageUploadModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onImageSelect={handleImageSelect}
-        currentImage={formData.logo}
-      />
     </div>
   );
 };
