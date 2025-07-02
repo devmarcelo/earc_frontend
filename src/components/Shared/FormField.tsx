@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   isNotEmpty,
   isValidRegex,
   isValidMinLength,
   isValidDocument,
+  isValidPhone,
+  isValidPasswordMatch,
 } from "../../utils/validators";
 
 interface FormFieldProps {
@@ -22,6 +25,7 @@ interface FormFieldProps {
   className?: string;
   helpText?: string;
   customValidation?: (value: string) => string | null;
+  matchValue?: string;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -39,10 +43,12 @@ const FormField: React.FC<FormFieldProps> = ({
   className = "",
   helpText,
   customValidation,
+  matchValue = "",
 }) => {
   const { t } = useTranslation();
   const [touched, setTouched] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Validate field
   const validateField = (fieldValue: string): string | null => {
@@ -62,6 +68,23 @@ const FormField: React.FC<FormFieldProps> = ({
 
     if (fieldValue && id === "document" && !isValidDocument(fieldValue)) {
       return t("document_error", { defaultValue: "Documento inválido" });
+    }
+
+    if (fieldValue && id === "phone" && !isValidPhone(fieldValue)) {
+      return t("phone_invalid", {
+        defaultValue: "Formato de telefone inválido.",
+      });
+    }
+
+    if (
+      fieldValue &&
+      type === "password" &&
+      isNotEmpty(matchValue) &&
+      !isValidPasswordMatch(matchValue, fieldValue)
+    ) {
+      return t("repeat_password_invalid", {
+        defaultValue: "As senhas não coincidem.",
+      });
     }
 
     if (fieldValue && pattern && !isValidRegex(fieldValue, pattern)) {
@@ -103,6 +126,10 @@ const FormField: React.FC<FormFieldProps> = ({
     setErrorMessage(error);
   };
 
+  const handleClick = () => {
+    setShowPassword(!showPassword);
+  };
+
   const hasError = touched && errorMessage;
 
   return (
@@ -116,24 +143,36 @@ const FormField: React.FC<FormFieldProps> = ({
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
-      <input
-        type={type}
-        id={id}
-        name={name}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onBlur={handleBlur}
-        required={required}
-        minLength={minLength}
-        maxLength={maxlength}
-        pattern={pattern}
-        className={`mt-1 block w-full rounded-md px-3 py-2 shadow-sm transition-colors focus:ring-1 focus:outline-none ${
-          hasError
-            ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
-            : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-        } invalid:border-red-300 invalid:text-red-900 invalid:ring-red-300 ${className} `}
-      />
+      <div className="relative">
+        <input
+          type={type === "password" && showPassword ? "text" : type}
+          id={id}
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onBlur={handleBlur}
+          required={required}
+          minLength={minLength}
+          maxLength={maxlength}
+          pattern={pattern}
+          className={`mt-1 block w-full rounded-md px-3 py-2 shadow-sm transition-colors focus:ring-1 focus:outline-none ${
+            hasError
+              ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
+              : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+          } invalid:border-red-300 invalid:text-red-900 invalid:ring-red-300 ${className} `}
+        />
+
+        {type === "password" && (
+          <button
+            type="button"
+            onClick={handleClick}
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        )}
+      </div>
 
       {hasError && (
         <div className="mt-1 flex items-center text-sm text-red-600">

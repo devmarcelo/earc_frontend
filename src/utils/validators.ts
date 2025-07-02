@@ -16,6 +16,18 @@ export const isValidMinLength = (value: string, minLength: number): boolean => {
   return value.length >= minLength;
 };
 
+export const isValidPhone = (value: string): boolean => {
+  const digits = value.replace(/\D/g, "");
+  return /^\d{10}$/.test(digits) || /^\d{11}$/.test(digits);
+};
+
+export const isValidPasswordMatch = (
+  password: string,
+  repeatPassword: string,
+): boolean => {
+  return password === repeatPassword;
+};
+
 export const isValidDocument = (value: string): boolean => {
   const digits = value.replace(/\D/g, "");
 

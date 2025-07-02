@@ -10,7 +10,9 @@ export interface CompanyFormData {
 
 export interface UserAdminFormData {
   email: string;
+  phone: string;
   password: string;
+  repeatPassword: string;
   apelido: string;
   imagem: string;
   aceite: boolean;
@@ -44,6 +46,7 @@ export interface CompanyFormProps extends BaseFormProps<CompanyFormData> {
 }
 
 export interface UserAdminFormProps extends BaseFormProps<UserAdminFormData> {
+  setFormData: (data: Partial<UserAdminFormData>) => void;
   loading?: boolean;
   error?: string;
   onImageChange?: (imageData: ImageData) => void;

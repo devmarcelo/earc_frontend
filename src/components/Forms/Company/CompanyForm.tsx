@@ -81,7 +81,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
           type="text"
           label={t("schema_name", { defaultValue: "Identificador" })}
           placeholder={t("schema_name_placeholder", {
-            defaultValue: "ex: minhaempresa",
+            defaultValue: "Ex: minhaempresa",
           })}
           value={formData.schema_name}
           onChange={onChange}

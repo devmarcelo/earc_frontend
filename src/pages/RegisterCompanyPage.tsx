@@ -6,9 +6,9 @@ import { CompanyForm, UserAdminForm, AddressForm } from "../components/Forms";
 import type {
   AddressFormData,
   CompanyFormData,
-  CompanyFormProps,
   ImageData,
   RegistrationFormData,
+  UserAdminFormData,
 } from "../@types";
 import { registerCompany } from "../services/registerCompanyService";
 
@@ -24,7 +24,9 @@ export default function RegisterCompany() {
     logoFile: undefined,
     logoType: "url",
     email: "",
+    phone: "",
     password: "",
+    repeatPassword: "",
     apelido: "",
     imagem: "",
     imagemFile: undefined,
@@ -64,6 +66,13 @@ export default function RegisterCompany() {
   };
 
   const setAddressFormData = (updates: Partial<AddressFormData>) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  };
+
+  const setUserAdminFormData = (updates: Partial<UserAdminFormData>) => {
     setFormData((prev) => ({
       ...prev,
       ...updates,
@@ -167,7 +176,9 @@ export default function RegisterCompany() {
         <UserAdminForm
           formData={{
             email: formData.email,
+            phone: formData.phone,
             password: formData.password,
+            repeatPassword: formData.repeatPassword,
             apelido: formData.apelido,
             imagem: formData.imagem,
             aceite: formData.aceite,
@@ -175,6 +186,7 @@ export default function RegisterCompany() {
             imagemType: formData.imagemType,
           }}
           onChange={handleChange}
+          setFormData={setUserAdminFormData}
           onImageChange={(imageData) => handleImageChange(imageData, "imagem")}
           loading={loading}
           error={error}

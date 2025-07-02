@@ -32,7 +32,6 @@ const AddressForm: React.FC<AddressFormProps> = ({
 
   const handleChangeCep = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    //const formatted = raw.replace(/\D/g, "").replace(/(\d{5})(\d{3})/, "$1-$2");
     const formatted = formatCep(raw);
     setCep(formatted);
 
@@ -118,6 +117,17 @@ const AddressForm: React.FC<AddressFormProps> = ({
               <span>{error}</span>
             </div>
           )}
+        </div>
+
+        <div className="text-right text-sm">
+          <a
+            href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mr-1 font-medium text-indigo-600 italic underline hover:text-indigo-500"
+          >
+            Não sei meu CEP
+          </a>
         </div>
 
         <FormField

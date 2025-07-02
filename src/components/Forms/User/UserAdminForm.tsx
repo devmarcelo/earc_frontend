@@ -3,9 +3,11 @@ import { useTranslation } from "react-i18next";
 import { ImageUploadModal, TermsModal, FormField } from "../../Shared";
 import { useModal } from "../../../hooks";
 import type { UserAdminFormProps, ImageData } from "../../../@types";
+import { formatPhone } from "../../../utils/formatters";
 
 const UserAdminForm: React.FC<UserAdminFormProps> = ({
   formData,
+  setFormData,
   onChange,
   error,
   onImageChange,
@@ -15,6 +17,15 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
   const [termsError, setTermsError] = useState<string | null>(null);
 
   const termsModal = useModal();
+
+  const handleChangePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedPhone = formatPhone(e.target.value);
+
+    setFormData({
+      ...formData,
+      phone: formattedPhone,
+    });
+  };
 
   const handleImageSelect = (imageData: ImageData) => {
     // Update form data with image information
@@ -128,18 +139,47 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
         />
 
         <FormField
-          id="password"
-          name="password"
-          type="password"
-          label={t("password", { defaultValue: "Senha" })}
-          placeholder={t("password_placeholder", {
-            defaultValue: "Digite uma senha segura",
-          })}
-          value={formData.password}
-          onChange={onChange}
+          id="phone"
+          name="phone"
+          label={t("phone", { defaultValue: "Telefone" })}
+          type="text"
+          value={formData.phone}
+          onChange={handleChangePhone}
+          placeholder="(99) 99999-9999"
           required
-          minLength={8}
+          maxlength={15}
         />
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField
+            id="password"
+            name="password"
+            type="password"
+            label={t("password", { defaultValue: "Senha" })}
+            placeholder={t("password_placeholder", {
+              defaultValue: "Digite uma senha segura",
+            })}
+            value={formData.password}
+            onChange={onChange}
+            required
+            minLength={8}
+            maxlength={16}
+          />
+
+          <FormField
+            id="repeatPassword"
+            name="repeatPassword"
+            label={t("repeat_password", { defaultValue: "Repetir Senha" })}
+            type="password"
+            value={formData.repeatPassword || ""}
+            onChange={onChange}
+            placeholder={t("repeat_password_placeholder", "Confirme sua senha")}
+            required
+            minLength={8}
+            maxlength={16}
+            matchValue={formData.password}
+          />
+        </div>
 
         <FormField
           id="apelido"
