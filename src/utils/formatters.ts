@@ -14,3 +14,27 @@ export const formatUser = (userId?: number | string) => {
   if (!userId) return "-";
   return typeof userId === "number" ? `Usuário ${userId}` : userId;
 };
+
+export const formatCep = (value: string): string => {
+  return value.replace(/\D/g, "").replace(/(\d{5})(\d{3})/, "$1-$2");
+};
+
+export const formatDocument = (value: string): string => {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length <= 11) {
+    return digits.replace(
+      /(\d{3})(\d{3})(\d{3})(\d{0,2})/,
+      (_, p1, p2, p3, p4) =>
+        [p1, p2, p3].filter(Boolean).join(".") + (p4 ? "-" + p4 : ""),
+    );
+  } else {
+    return digits.replace(
+      /(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/,
+      (_, p1, p2, p3, p4, p5) =>
+        [p1, p2, p3].filter(Boolean).join(".") +
+        "/" +
+        p4 +
+        (p5 ? "-" + p5 : ""),
+    );
+  }
+};

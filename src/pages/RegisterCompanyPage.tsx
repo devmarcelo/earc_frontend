@@ -5,6 +5,8 @@ import Stepper from "../components/Wizard/Stepper";
 import { CompanyForm, UserAdminForm, AddressForm } from "../components/Forms";
 import type {
   AddressFormData,
+  CompanyFormData,
+  CompanyFormProps,
   ImageData,
   RegistrationFormData,
 } from "../@types";
@@ -17,6 +19,7 @@ export default function RegisterCompany() {
   const [formData, setFormData] = useState<RegistrationFormData>({
     company_name: "",
     schema_name: "",
+    document: "",
     logo: "",
     logoFile: undefined,
     logoType: "url",
@@ -51,6 +54,13 @@ export default function RegisterCompany() {
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
+  };
+
+  const setCompanyFormData = (updates: Partial<CompanyFormData>) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...updates,
+    }));
   };
 
   const setAddressFormData = (updates: Partial<AddressFormData>) => {
@@ -121,12 +131,14 @@ export default function RegisterCompany() {
           formData={{
             company_name: formData.company_name,
             schema_name: formData.schema_name,
+            document: formData.document,
             logo: formData.logo,
             logoFile: formData.logoFile,
             logoType: formData.logoType,
           }}
           onChange={handleChange}
           onImageChange={(imageData) => handleImageChange(imageData, "logo")}
+          setFormData={setCompanyFormData}
         />
       ),
     },

@@ -4,6 +4,7 @@ import {
   isNotEmpty,
   isValidRegex,
   isValidMinLength,
+  isValidDocument,
 } from "../../utils/validators";
 
 interface FormFieldProps {
@@ -57,6 +58,10 @@ const FormField: React.FC<FormFieldProps> = ({
         minLength,
         defaultValue: `Mínimo de ${minLength} caracteres`,
       });
+    }
+
+    if (fieldValue && id === "document" && !isValidDocument(fieldValue)) {
+      return t("document_error", { defaultValue: "Documento inválido" });
     }
 
     if (fieldValue && pattern && !isValidRegex(fieldValue, pattern)) {

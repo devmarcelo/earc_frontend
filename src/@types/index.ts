@@ -2,6 +2,7 @@
 export interface CompanyFormData {
   company_name: string;
   schema_name: string;
+  document: string;
   logo: string;
   logoFile?: File;
   logoType?: "url" | "file";
@@ -37,6 +38,7 @@ export interface BaseFormProps<T> {
 }
 
 export interface CompanyFormProps extends BaseFormProps<CompanyFormData> {
+  setFormData: (data: Partial<CompanyFormData>) => void;
   onNext?: () => void;
   onImageChange?: (imageData: ImageData) => void;
 }

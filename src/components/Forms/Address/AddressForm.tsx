@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { FormField } from "../../Shared";
 import { useCep } from "../../../hooks/useCep";
-import type { AddressFormProps, CepApiResponse } from "../../../@types";
+import type { AddressFormProps } from "../../../@types";
 import { batchUpdateFormData } from "../../../utils/batchUpdateFormData";
 import { useState } from "react";
+import { formatCep } from "../../../utils/formatters";
 
 const AddressForm: React.FC<AddressFormProps> = ({
   formData,
@@ -31,7 +32,8 @@ const AddressForm: React.FC<AddressFormProps> = ({
 
   const handleChangeCep = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    const formatted = raw.replace(/\D/g, "").replace(/(\d{5})(\d{3})/, "$1-$2");
+    //const formatted = raw.replace(/\D/g, "").replace(/(\d{5})(\d{3})/, "$1-$2");
+    const formatted = formatCep(raw);
     setCep(formatted);
 
     setFormData({

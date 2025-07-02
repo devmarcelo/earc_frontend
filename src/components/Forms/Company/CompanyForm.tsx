@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormField, ImageUploadModal } from "../../Shared";
 import type { CompanyFormProps, ImageData } from "../../../@types";
+import { formatDocument } from "../../../utils/formatters";
 
 const CompanyForm: React.FC<CompanyFormProps> = ({
   formData,
+  setFormData,
   onChange,
   onNext,
 }) => {
@@ -35,6 +37,15 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (onNext) onNext();
+  };
+
+  const handleChangeDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedDoc = formatDocument(e.target.value);
+
+    setFormData({
+      ...formData,
+      document: formattedDoc,
+    });
   };
 
   return (
@@ -76,6 +87,22 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
           onChange={onChange}
           required
           pattern="^[a-z0-9]+$"
+        />
+
+        <FormField
+          id="document"
+          name="document"
+          type="text"
+          label={t("company_document", {
+            defaultValue: "Documento (CNPJ ou CPF)",
+          })}
+          value={formData.document}
+          onChange={handleChangeDocument}
+          placeholder={t("company_document_placeholder", {
+            defaultValue: "Informe o CNPJ ou CPF",
+          })}
+          required
+          maxlength={18}
         />
 
         <div>
