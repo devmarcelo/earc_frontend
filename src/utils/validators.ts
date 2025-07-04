@@ -103,3 +103,37 @@ export const isValidDocument = (value: string): boolean => {
 
   return false;
 };
+
+export const validateRequiredFields = (formId: string): boolean => {
+  const form = document.getElementById(formId) as HTMLFormElement;
+
+  if (!form) {
+    return false;
+  }
+
+  const inputs = form.querySelectorAll("input[required], select[required]");
+  let isValid = true;
+
+  inputs.forEach((input) => {
+    const inputElement = input as HTMLInputElement | HTMLSelectElement;
+    if (!inputElement.value.trim()) {
+      inputElement.focus();
+      inputElement.blur();
+      isValid = false;
+    }
+
+    if (inputElement.type === "checkbox" && !inputElement.checked) {
+      inputElement.focus();
+      inputElement.blur();
+      isValid = false;
+    }
+
+    if (inputElement.type === "radio" && !inputElement.checked) {
+      inputElement.focus();
+      inputElement.blur();
+      isValid = false;
+    }
+  });
+
+  return isValid;
+};

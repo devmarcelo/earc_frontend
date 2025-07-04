@@ -61,7 +61,7 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form id="company-form" onSubmit={handleSubmit} className="space-y-4">
         <FormField
           id="company_name"
           name="company_name"

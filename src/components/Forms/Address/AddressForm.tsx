@@ -65,7 +65,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form id="address-form" onSubmit={handleSubmit} className="space-y-4">
         <div className="relative">
           <FormField
             id="cep"

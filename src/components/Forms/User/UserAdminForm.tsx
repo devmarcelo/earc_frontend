@@ -14,7 +14,6 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [termsError, setTermsError] = useState<string | null>(null);
 
   const termsModal = useModal();
 
@@ -75,7 +74,6 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
       },
     } as React.ChangeEvent<HTMLInputElement>;
     onChange(syntheticEvent);
-    setTermsError(null);
     termsModal.closeModal();
   };
 
@@ -90,21 +88,11 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
       },
     } as React.ChangeEvent<HTMLInputElement>;
     onChange(syntheticEvent);
-
     termsModal.closeModal();
   };
 
   const handleTermsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e);
-    if (e.target.checked) {
-      setTermsError(null);
-    } else {
-      setTermsError(
-        t("terms_required", {
-          defaultValue: "Você deve aceitar os termos de uso",
-        }),
-      );
-    }
   };
 
   return (
@@ -123,7 +111,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
         </p>
       </div>
 
-      <div className="space-y-4">
+      <form id="user-admin-form" className="space-y-4">
         <FormField
           id="email"
           name="email"
@@ -134,7 +122,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
           })}
           value={formData.email}
           onChange={onChange}
-          pattern="/^[^\s@]+@[^\s@]+\.[^\s@]+$/"
+          pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
           required
         />
 
@@ -278,68 +266,29 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
         </div>
 
         {/* Terms and Conditions */}
-        <div className="space-y-1">
-          <div className="flex items-start">
-            <div className="flex h-5 items-center">
-              <input
-                id="aceite"
-                name="aceite"
-                type="checkbox"
-                checked={formData.aceite}
-                onChange={handleTermsChange}
-                required
-                className={`h-4 w-4 rounded border transition-colors focus:ring-1 focus:ring-offset-0 ${
-                  termsError
-                    ? "border-red-300 text-red-600 focus:ring-red-500"
-                    : "border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                }`}
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label
-                htmlFor="aceite"
-                className={`font-medium transition-colors ${
-                  termsError ? "text-red-600" : "text-gray-700"
-                }`}
+        <FormField
+          id="aceite"
+          name="aceite"
+          type="checkbox"
+          label={
+            <span className="text-sm font-medium transition-colors">
+              {t("terms_acceptance", {
+                defaultValue: "Li e aceito os",
+              })}{" "}
+              <button
+                type="button"
+                className="text-indigo-600 underline hover:text-indigo-500"
+                onClick={handleTermsLinkClick}
               >
-                {t("terms_acceptance", {
-                  defaultValue: "Li e aceito os",
-                })}{" "}
-                <button
-                  type="button"
-                  onClick={handleTermsLinkClick}
-                  className="text-indigo-600 underline hover:text-indigo-500"
-                >
-                  {t("terms_of_use", { defaultValue: "termos de uso" })}
-                </button>{" "}
-                <span className="text-red-500">*</span>
-              </label>
-              <p className="text-gray-500">
-                {t("terms_description", {
-                  defaultValue:
-                    "Clique no link acima para ler os termos completos antes de aceitar",
-                })}
-              </p>
-            </div>
-          </div>
-
-          {termsError && (
-            <div className="mt-1 flex items-center text-sm text-red-600">
-              <svg
-                className="mr-1 h-4 w-4 flex-shrink-0"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>{termsError}</span>
-            </div>
-          )}
-        </div>
+                {t("terms_of_use", { defaultValue: "Termos de Uso" })}
+              </button>
+            </span>
+          }
+          checked={formData.aceite}
+          onChange={handleTermsChange}
+          required
+        />
+        {/* Fim Terms and Conditions */}
 
         {error && (
           <div className="rounded-md bg-red-50 p-4">
@@ -363,7 +312,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
             </div>
           </div>
         )}
-      </div>
+      </form>
 
       {/* Image Upload Modal */}
       <ImageUploadModal

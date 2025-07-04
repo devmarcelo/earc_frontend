@@ -14,9 +14,10 @@ interface FormFieldProps {
   id: string;
   name: string;
   type?: string;
-  label: string;
+  label: string | React.ReactNode;
   placeholder?: string;
-  value: string;
+  value?: string;
+  checked?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   minLength?: number;
@@ -26,6 +27,7 @@ interface FormFieldProps {
   helpText?: string;
   customValidation?: (value: string) => string | null;
   matchValue?: string;
+  children?: React.ReactNode;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -35,6 +37,7 @@ const FormField: React.FC<FormFieldProps> = ({
   label,
   placeholder,
   value,
+  checked,
   onChange,
   required = false,
   minLength,
@@ -44,6 +47,7 @@ const FormField: React.FC<FormFieldProps> = ({
   helpText,
   customValidation,
   matchValue = "",
+  children,
 }) => {
   const { t } = useTranslation();
   const [touched, setTouched] = useState(false);
@@ -51,26 +55,52 @@ const FormField: React.FC<FormFieldProps> = ({
   const [showPassword, setShowPassword] = useState(false);
 
   // Validate field
-  const validateField = (fieldValue: string): string | null => {
-    if (required && !isNotEmpty(fieldValue.trim())) {
+  const validateField = (fieldValue: string | boolean): string | null => {
+    if (type === "checkbox" && required && !checked) {
       return t("field_required", {
         field: label,
         defaultValue: "Este campo é obrigatório",
       });
     }
 
-    if (fieldValue && minLength && !isValidMinLength(fieldValue, minLength)) {
+    if (
+      required &&
+      type !== "checkbox" &&
+      !isNotEmpty((fieldValue as string).trim())
+    ) {
+      return t("field_required", {
+        field: label,
+        defaultValue: "Este campo é obrigatório",
+      });
+    }
+
+    if (
+      fieldValue &&
+      minLength &&
+      type !== "checkbox" &&
+      !isValidMinLength(fieldValue as string, minLength)
+    ) {
       return t("min_length_error", {
         minLength,
         defaultValue: `Mínimo de ${minLength} caracteres`,
       });
     }
 
-    if (fieldValue && id === "document" && !isValidDocument(fieldValue)) {
+    if (
+      fieldValue &&
+      type !== "checkbox" &&
+      name === "document" &&
+      !isValidDocument(fieldValue as string)
+    ) {
       return t("document_error", { defaultValue: "Documento inválido" });
     }
 
-    if (fieldValue && id === "phone" && !isValidPhone(fieldValue)) {
+    if (
+      fieldValue &&
+      type !== "checkbox" &&
+      name === "phone" &&
+      !isValidPhone(fieldValue as string)
+    ) {
       return t("phone_invalid", {
         defaultValue: "Formato de telefone inválido.",
       });
@@ -80,14 +110,19 @@ const FormField: React.FC<FormFieldProps> = ({
       fieldValue &&
       type === "password" &&
       isNotEmpty(matchValue) &&
-      !isValidPasswordMatch(matchValue, fieldValue)
+      !isValidPasswordMatch(matchValue, fieldValue as string)
     ) {
       return t("repeat_password_invalid", {
         defaultValue: "As senhas não coincidem.",
       });
     }
 
-    if (fieldValue && pattern && !isValidRegex(fieldValue, pattern)) {
+    if (
+      fieldValue &&
+      pattern &&
+      type !== "checkbox" &&
+      !isValidRegex(fieldValue as string, pattern)
+    ) {
       if (type === "email") {
         return t("invalid_email", {
           defaultValue: "Email inválido",
@@ -105,8 +140,8 @@ const FormField: React.FC<FormFieldProps> = ({
       });
     }
 
-    if (customValidation) {
-      return customValidation(fieldValue);
+    if (customValidation && type !== "checkbox") {
+      return customValidation(fieldValue as string);
     }
 
     return null;
@@ -115,14 +150,18 @@ const FormField: React.FC<FormFieldProps> = ({
   // Update error message when value changes
   useEffect(() => {
     if (touched) {
-      const error = validateField(value);
+      const error = validateField(
+        type === "checkbox" ? !!checked : (value as string),
+      );
       setErrorMessage(error);
     }
   }, [value, touched]);
 
   const handleBlur = () => {
     setTouched(true);
-    const error = validateField(value);
+    const error = validateField(
+      type === "checkbox" ? !!checked : (value as string),
+    );
     setErrorMessage(error);
   };
 
@@ -132,70 +171,120 @@ const FormField: React.FC<FormFieldProps> = ({
 
   const hasError = touched && errorMessage;
 
-  return (
-    <div className="space-y-1">
-      <label
-        htmlFor={id}
-        className={`ml-1 block text-sm font-medium transition-colors ${
-          hasError ? "text-red-600" : "text-gray-700"
-        }`}
-      >
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-
-      <div className="relative">
+  if (type === "checkbox") {
+    return (
+      <div className="space-x-2">
         <input
-          type={type === "password" && showPassword ? "text" : type}
+          type="checkbox"
           id={id}
           name={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          onBlur={handleBlur}
+          checked={!!checked}
           required={required}
-          minLength={minLength}
-          maxLength={maxlength}
-          pattern={pattern}
-          className={`mt-1 block w-full rounded-md px-3 py-2 shadow-sm transition-colors focus:ring-1 focus:outline-none ${
-            hasError
-              ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
-              : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-          } invalid:border-red-300 invalid:text-red-900 invalid:ring-red-300 ${className} `}
+          onChange={(e) => {
+            onChange(e);
+            setTouched(true);
+          }}
+          onBlur={handleBlur}
+          className={`h-4 w-4 rounded border-gray-300 transition-colors focus:ring-2 focus:ring-indigo-500 ${hasError ? "border-red-500 ring-2 ring-red-400" : ""}`}
         />
-
-        {type === "password" && (
-          <button
-            type="button"
-            onClick={handleClick}
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+        <label htmlFor={id} className="flex-1 cursor-pointer select-none">
+          {label}
+          {children}
+        </label>
+        {hasError && (
+          <div className="mt-1 flex items-center text-sm text-red-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              className="lucide lucide-circle-alert-icon lucide-circle-alert mr-1 h-4 w-4 flex-shrink-0"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" x2="12" y1="8" y2="12" />
+              <line x1="12" x2="12.01" y1="16" y2="16" />
+            </svg>
+            <span>{errorMessage}</span>
+          </div>
         )}
       </div>
+    );
+  } else {
+    return (
+      <div className="space-y-1">
+        <label
+          htmlFor={id}
+          className={`ml-1 block text-sm font-medium transition-colors ${
+            hasError ? "text-red-600" : "text-gray-700"
+          }`}
+        >
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
 
-      {hasError && (
-        <div className="mt-1 flex items-center text-sm text-red-600">
-          <svg
-            className="mr-1 h-4 w-4 flex-shrink-0"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span>{errorMessage}</span>
+        <div className="relative">
+          <input
+            type={type === "password" && showPassword ? "text" : type}
+            id={id}
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            onBlur={handleBlur}
+            required={required}
+            minLength={minLength}
+            maxLength={maxlength}
+            pattern={pattern}
+            className={`mt-1 block w-full rounded-md px-3 py-2 shadow-sm transition-colors focus:ring-1 focus:outline-none ${
+              hasError
+                ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+            } invalid:border-red-300 invalid:text-red-900 invalid:ring-red-300 ${className} `}
+          />
+
+          {type === "password" && (
+            <button
+              type="button"
+              onClick={handleClick}
+              className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          )}
         </div>
-      )}
 
-      {!hasError && helpText && (
-        <p className="mt-1 text-xs text-gray-500">{helpText}</p>
-      )}
-    </div>
-  );
+        {hasError && (
+          <div className="mt-1 flex items-center text-sm text-red-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              className="lucide lucide-circle-alert-icon lucide-circle-alert mr-1 h-4 w-4 flex-shrink-0"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" x2="12" y1="8" y2="12" />
+              <line x1="12" x2="12.01" y1="16" y2="16" />
+            </svg>
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {!hasError && helpText && (
+          <p className="mt-1 text-xs text-gray-500">{helpText}</p>
+        )}
+      </div>
+    );
+  }
 };
 
 export default FormField;

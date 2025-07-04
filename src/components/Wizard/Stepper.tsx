@@ -7,6 +7,7 @@ interface Step {
   component: React.ReactNode;
   validate?: () => boolean | Promise<boolean>;
   isValid?: boolean;
+  customValidate?: () => boolean | Promise<boolean>;
 }
 
 interface StepperProps {
@@ -38,7 +39,7 @@ const Stepper: React.FC<StepperProps> = ({
   const validateCurrentStep = useCallback(async (): Promise<boolean> => {
     const currentStepData = steps[currentStep];
 
-    if (!currentStepData.validate) {
+    if (!currentStepData.validate && !currentStepData.customValidate) {
       return true; // No validation function means step is valid
     }
 
@@ -46,7 +47,15 @@ const Stepper: React.FC<StepperProps> = ({
     setValidationErrors([]);
 
     try {
-      const isValid = await currentStepData.validate();
+      let isValid = true;
+
+      if (currentStepData.validate) {
+        isValid = await currentStepData.validate();
+      }
+
+      if (currentStepData.customValidate) {
+        isValid = await currentStepData.customValidate();
+      }
 
       // Update step validation state
       setStepValidation((prev) => {
@@ -80,7 +89,7 @@ const Stepper: React.FC<StepperProps> = ({
     const errors: string[] = [];
     const currentForm = containerRef.current?.querySelector("form");
 
-    if (currentForm) {
+    if (currentForm && steps[currentStep].validate) {
       const requiredInputs = currentForm.querySelectorAll(
         "input[required], select[required]",
       );

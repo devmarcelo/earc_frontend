@@ -11,6 +11,7 @@ import type {
   UserAdminFormData,
 } from "../@types";
 import { registerCompany } from "../services/registerCompanyService";
+import { validateRequiredFields } from "../utils/validators";
 
 export default function RegisterCompany() {
   const { t } = useTranslation();
@@ -150,6 +151,7 @@ export default function RegisterCompany() {
           setFormData={setCompanyFormData}
         />
       ),
+      customValidate: () => validateRequiredFields("company-form"),
     },
     {
       title: t("address", { defaultValue: "Endereço" }),
@@ -169,6 +171,7 @@ export default function RegisterCompany() {
           setFormData={setAddressFormData}
         />
       ),
+      customValidate: () => validateRequiredFields("address-form"),
     },
     {
       title: t("administrator", { defaultValue: "Administrador" }),
@@ -192,6 +195,7 @@ export default function RegisterCompany() {
           error={error}
         />
       ),
+      customValidate: () => validateRequiredFields("user-admin-form"),
     },
   ];
 
