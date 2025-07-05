@@ -1,3 +1,3 @@
 // Export all hooks
-export { useCep } from "./useCep";
+export { useZipcode } from "./useCep";
 export { useModal } from "./useModal";

@@ -1,22 +1,29 @@
-import type { CepApiResponse, CepData } from "../@types";
+import { t } from "i18next";
+import type { CepApiResponse, ZipcodeData } from "../@types";
 
 /**
  * Busca informações de endereço através do CEP usando a API ViaCEP
- * @param cep - CEP a ser consultado (apenas números)
+ * @param zipcode - CEP a ser consultado (apenas números)
  * @returns Promise com dados do endereço ou null se não encontrado
  * @throws Error se houver problema na requisição
  */
-export const handleCepApi = async (cep: string): Promise<CepData | null> => {
+export const handleZipcodeApi = async (
+  zipcode: string,
+): Promise<ZipcodeData | null> => {
   // Remove caracteres não numéricos
-  const cleanCep = cep.replace(/\D/g, "");
+  const cleanZipcode = zipcode.replace(/\D/g, "");
 
   // Valida se o CEP tem 8 dígitos
-  if (cleanCep.length !== 8) {
-    throw new Error("CEP deve ter 8 dígitos");
+  if (cleanZipcode.length !== 8) {
+    throw new Error(
+      t("zipcode_minlength_error", { defaultValue: "CEP deve ter 8 dígitos" }),
+    );
   }
 
   try {
-    const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+    const response = await fetch(
+      `https://viacep.com.br/ws/${cleanZipcode}/json/`,
+    );
 
     if (!response.ok) {
       throw new Error(`Erro na requisição: ${response.status}`);
@@ -31,15 +38,18 @@ export const handleCepApi = async (cep: string): Promise<CepData | null> => {
 
     // Mapeia os dados da API para o formato esperado
     return {
-      endereco: data.logradouro || "",
-      bairro: data.bairro || "",
-      cidade: data.localidade || "",
-      estado: data.uf || "",
+      address: data.logradouro || "",
+      neighborhood: data.bairro || "",
+      town: data.localidade || "",
+      address_state: data.uf || "",
     };
   } catch (error) {
     console.error("Erro ao buscar CEP:", error);
     throw new Error(
-      "Erro ao consultar CEP. Verifique sua conexão e tente novamente.",
+      t("zipcode_fetching_error", {
+        defaultValue:
+          "Erro ao consultar CEP. Verifique sua conexão e tente novamente.",
+      }),
     );
   }
 };

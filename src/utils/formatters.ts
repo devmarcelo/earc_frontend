@@ -15,7 +15,7 @@ export const formatUser = (userId?: number | string) => {
   return typeof userId === "number" ? `Usuário ${userId}` : userId;
 };
 
-export const formatCep = (value: string): string => {
+export const formatZipcode = (value: string): string => {
   return value.replace(/\D/g, "").replace(/(\d{5})(\d{3})/, "$1-$2");
 };
 

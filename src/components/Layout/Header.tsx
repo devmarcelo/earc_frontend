@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext"; // To potentially display logo
@@ -27,16 +26,16 @@ const Header: React.FC = () => {
       </div>
       <div className="flex items-center space-x-4">
         {/* Imagem do usuário */}
-        {user?.imagem && (
+        {user?.avatar && (
           <img
-            src={user.imagem}
+            src={user.avatar}
             alt="Avatar do usuário"
             className="h-10 w-10 rounded-full object-cover"
           />
         )}
         <span className="font-medium text-gray-800">
           {user
-            ? `${t("welcome")}, ${user?.apelido || user.email}`
+            ? `${t("welcome")}, ${user?.nickname || user.email}`
             : t("welcome")}
         </span>
         {/* Language Switcher Placeholder */}

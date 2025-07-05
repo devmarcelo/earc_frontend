@@ -13,22 +13,22 @@ export interface UserAdminFormData {
   phone: string;
   password: string;
   repeatPassword: string;
-  apelido: string;
-  imagem: string;
-  aceite: boolean;
-  imagemFile?: File;
-  imagemType?: "url" | "file";
+  nickname: string;
+  avatar: string;
+  acceptance: boolean;
+  imageFile?: File;
+  imageType?: "url" | "file";
 }
 
 export interface AddressFormData {
-  cep: string;
-  endereco: string;
-  numero: string;
-  complemento: string;
-  bairro: string;
-  cidade: string;
-  estado: string;
-  pais: string;
+  zipcode: string;
+  address: string;
+  address_number: string;
+  complement: string;
+  neighborhood: string;
+  town: string;
+  address_state: string;
+  country: string;
 }
 
 // Form Props Types
@@ -63,7 +63,7 @@ export interface RegistrationFormData
   extends CompanyFormData,
     UserAdminFormData,
     AddressFormData {
-  data_cadastro: string;
+  registration_date: string;
 }
 
 // Image Upload Types
@@ -102,22 +102,22 @@ export interface CepApiResponse {
   erro?: boolean;
 }
 
-export interface CepData {
-  endereco: string;
-  bairro: string;
-  cidade: string;
-  estado: string;
+export interface ZipcodeData {
+  address: string;
+  neighborhood: string;
+  town: string;
+  address_state: string;
 }
 
 // Hook Return Types
-export interface UseCepReturn {
+export interface UseZipcodeReturn {
   isLoading: boolean;
   error: string | null;
-  searchCep: (cep: string) => Promise<CepData | null>;
+  searchZipcode: (zipcode: string) => Promise<ZipcodeData | null>;
   clearError: () => void;
-  handleCepChange: (
+  handleZipcodeChange: (
     e: React.ChangeEvent<HTMLInputElement>,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
   ) => Promise<void>;
-  validateCep: (value: string) => string | null;
+  validateZipcode: (value: string) => string | null;
 }

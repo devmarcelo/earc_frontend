@@ -1,16 +1,16 @@
-import { fetchAddressByCep } from "../services/cepService";
+import { fetchAddressByZipcode } from "../services/cepService";
 import type { CepApiResponse } from "../@types";
 import { useState } from "react";
 
-export function useCep(onAddressFound?: (address: CepApiResponse) => void) {
+export function useZipcode(onAddressFound?: (address: CepApiResponse) => void) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCep = async (cep: string) => {
+  const fetchZipcode = async (zipcode: string) => {
     try {
       setIsLoading(true);
       setError(null);
-      const address = await fetchAddressByCep(cep);
+      const address = await fetchAddressByZipcode(zipcode);
       if (onAddressFound) {
         onAddressFound(address);
       }
@@ -21,5 +21,5 @@ export function useCep(onAddressFound?: (address: CepApiResponse) => void) {
     }
   };
 
-  return { fetchCep, isLoading, error };
+  return { fetchZipcode, isLoading, error };
 }

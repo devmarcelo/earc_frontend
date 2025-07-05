@@ -28,20 +28,20 @@ export default function RegisterCompany() {
     phone: "",
     password: "",
     repeatPassword: "",
-    apelido: "",
-    imagem: "",
-    imagemFile: undefined,
-    imagemType: "url",
-    aceite: false,
-    data_cadastro: new Date().toISOString(),
-    cep: "",
-    endereco: "",
-    numero: "",
-    complemento: "",
-    bairro: "",
-    cidade: "",
-    estado: "",
-    pais: "Brasil",
+    nickname: "",
+    avatar: "",
+    imageFile: undefined,
+    imageType: "url",
+    acceptance: false,
+    registration_date: new Date().toISOString(),
+    zipcode: "",
+    address: "",
+    address_number: "",
+    complement: "",
+    neighborhood: "",
+    town: "",
+    address_state: "",
+    country: "Brasil",
   });
 
   const [error, setError] = useState("");
@@ -80,7 +80,7 @@ export default function RegisterCompany() {
     }));
   };
 
-  const handleImageChange = (imageData: ImageData, key: "logo" | "imagem") => {
+  const handleImageChange = (imageData: ImageData, key: "logo" | "image") => {
     setFormData((prev) => ({
       ...prev,
       [key]: imageData.url,
@@ -158,14 +158,14 @@ export default function RegisterCompany() {
       component: (
         <AddressForm
           formData={{
-            cep: formData.cep,
-            endereco: formData.endereco,
-            numero: formData.numero,
-            complemento: formData.complemento,
-            bairro: formData.bairro,
-            cidade: formData.cidade,
-            estado: formData.estado,
-            pais: formData.pais,
+            zipcode: formData.zipcode,
+            address: formData.address,
+            address_number: formData.address_number,
+            complement: formData.complement,
+            neighborhood: formData.neighborhood,
+            town: formData.town,
+            address_state: formData.address_state,
+            country: formData.country,
           }}
           onChange={handleChange}
           setFormData={setAddressFormData}
@@ -182,15 +182,15 @@ export default function RegisterCompany() {
             phone: formData.phone,
             password: formData.password,
             repeatPassword: formData.repeatPassword,
-            apelido: formData.apelido,
-            imagem: formData.imagem,
-            aceite: formData.aceite,
-            imagemFile: formData.imagemFile,
-            imagemType: formData.imagemType,
+            nickname: formData.nickname,
+            avatar: formData.avatar,
+            acceptance: formData.acceptance,
+            imageFile: formData.imageFile,
+            imageType: formData.imageType,
           }}
           onChange={handleChange}
           setFormData={setUserAdminFormData}
-          onImageChange={(imageData) => handleImageChange(imageData, "imagem")}
+          onImageChange={(imageData) => handleImageChange(imageData, "image")}
           loading={loading}
           error={error}
         />

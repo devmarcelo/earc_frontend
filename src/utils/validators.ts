@@ -8,7 +8,7 @@ export const isValidRegex = (value: string, pattern: string): boolean => {
   return new RegExp(pattern).test(value);
 };
 
-export const isValidCep = (value: string): boolean => {
+export const isValidZipcode = (value: string): boolean => {
   return value.replace(/\D/g, "").length !== 8;
 };
 

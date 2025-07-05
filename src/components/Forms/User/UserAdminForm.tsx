@@ -34,7 +34,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
       // Fallback: create synthetic event for image URL
       const syntheticEvent = {
         target: {
-          name: "imagem",
+          name: "avatar",
           value: imageData.url,
         },
       } as React.ChangeEvent<HTMLInputElement>;
@@ -46,7 +46,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
   const handleRemoveImage = () => {
     const syntheticEvent = {
       target: {
-        name: "imagem",
+        name: "avatar",
         value: "",
       },
     } as React.ChangeEvent<HTMLInputElement>;
@@ -67,7 +67,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
     // Update the checkbox to checked
     const syntheticEvent = {
       target: {
-        name: "aceite",
+        name: "acceptance",
         value: "",
         type: "checkbox",
         checked: true,
@@ -81,7 +81,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
     // Ensure checkbox remains unchecked
     const syntheticEvent = {
       target: {
-        name: "aceite",
+        name: "acceptance",
         value: "",
         type: "checkbox",
         checked: false,
@@ -170,32 +170,32 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
         </div>
 
         <FormField
-          id="apelido"
-          name="apelido"
+          id="nickname"
+          name="nickname"
           type="text"
           label={t("nickname", { defaultValue: "Nome/Apelido" })}
           placeholder={t("nickname_placeholder", {
             defaultValue: "Como você gostaria de ser chamado",
           })}
-          value={formData.apelido}
+          value={formData.nickname}
           onChange={onChange}
         />
 
         {/* Profile Image Upload Section */}
         <div>
           <label
-            htmlFor="imagem"
+            htmlFor="avatar"
             className="ml-2 block text-left text-sm font-medium text-gray-700"
           >
             {t("profile_image", { defaultValue: "Foto de Perfil" })}
           </label>
 
           {/* Image Preview */}
-          {formData.imagem ? (
+          {formData.avatar ? (
             <div className="mt-2">
               <div className="relative inline-block">
                 <img
-                  src={formData.imagem}
+                  src={formData.avatar}
                   alt="Profile preview"
                   className="h-20 w-20 rounded-full border border-gray-300 bg-gray-50 object-cover"
                   onError={(e) => {
@@ -267,8 +267,8 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
 
         {/* Terms and Conditions */}
         <FormField
-          id="aceite"
-          name="aceite"
+          id="acceptance"
+          name="acceptance"
           type="checkbox"
           label={
             <span className="text-sm font-medium transition-colors">
@@ -284,7 +284,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
               </button>
             </span>
           }
-          checked={formData.aceite}
+          checked={formData.acceptance}
           onChange={handleTermsChange}
           required
         />
@@ -319,7 +319,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onImageSelect={handleImageSelect}
-        currentImage={formData.imagem}
+        currentImage={formData.avatar}
         title={t("select_profile_photo", {
           defaultValue: "Selecionar Foto de Perfil",
         })}

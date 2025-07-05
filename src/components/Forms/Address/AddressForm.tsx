@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { FormField } from "../../Shared";
-import { useCep } from "../../../hooks/useCep";
+import { useZipcode } from "../../../hooks/useCep";
 import type { AddressFormProps } from "../../../@types";
 import { batchUpdateFormData } from "../../../utils/batchUpdateFormData";
 import { useState } from "react";
-import { formatCep } from "../../../utils/formatters";
+import { formatZipcode } from "../../../utils/formatters";
 
 const AddressForm: React.FC<AddressFormProps> = ({
   formData,
@@ -14,34 +14,34 @@ const AddressForm: React.FC<AddressFormProps> = ({
   onPrevious,
 }) => {
   const { t } = useTranslation();
-  const [cep, setCep] = useState("");
+  const [zipcode, setZipcode] = useState("");
 
-  const { fetchCep, isLoading, error } = useCep((address) => {
+  const { fetchZipcode, isLoading, error } = useZipcode((address) => {
     batchUpdateFormData(
       {
-        cep: address.cep,
-        endereco: address.logradouro,
-        bairro: address.bairro,
-        cidade: address.localidade,
-        estado: address.uf,
+        zipcode: address.cep,
+        address: address.logradouro,
+        neighborhood: address.bairro,
+        town: address.localidade,
+        address_state: address.uf,
       },
       formData,
       setFormData,
     );
   });
 
-  const handleChangeCep = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeZipcode = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    const formatted = formatCep(raw);
-    setCep(formatted);
+    const formatted = formatZipcode(raw);
+    setZipcode(formatted);
 
     setFormData({
       ...formData,
-      cep: formatted,
+      zipcode: formatted,
     });
 
     if (formatted.length === 9) {
-      fetchCep(formatted);
+      fetchZipcode(formatted);
     }
   };
 
@@ -68,13 +68,13 @@ const AddressForm: React.FC<AddressFormProps> = ({
       <form id="address-form" onSubmit={handleSubmit} className="space-y-4">
         <div className="relative">
           <FormField
-            id="cep"
-            name="cep"
+            id="zipcode"
+            name="zipcode"
             type="text"
-            label={t("cep", { defaultValue: "CEP" })}
+            label={t("zipcode", { defaultValue: "CEP" })}
             placeholder="00000-000"
-            value={formData.cep}
-            onChange={handleChangeCep}
+            value={formData.zipcode}
+            onChange={handleChangeZipcode}
             required
             maxlength={9}
           />
@@ -126,96 +126,96 @@ const AddressForm: React.FC<AddressFormProps> = ({
             rel="noopener noreferrer"
             className="mr-1 font-medium text-indigo-600 italic underline hover:text-indigo-500"
           >
-            Não sei meu CEP
+            {t("dont_know_my_zipcode", { defaultValue: "Não sei meu CEP" })}
           </a>
         </div>
 
         <FormField
-          id="endereco"
-          name="endereco"
+          id="address"
+          name="address"
           type="text"
           label={t("address", { defaultValue: "Endereço" })}
           placeholder={t("address_placeholder", {
             defaultValue: "Rua, Avenida, etc.",
           })}
-          value={formData.endereco}
+          value={formData.address}
           onChange={onChange}
           required
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
-            id="numero"
-            name="numero"
+            id="address_number"
+            name="address_number"
             type="text"
             label={t("number", { defaultValue: "Número" })}
             placeholder="123"
-            value={formData.numero}
+            value={formData.address_number}
             onChange={onChange}
             required
           />
 
           <FormField
-            id="complemento"
-            name="complemento"
+            id="complement"
+            name="complement"
             type="text"
             label={t("complement", { defaultValue: "Complemento" })}
             placeholder={t("complement_placeholder", {
               defaultValue: "Apto, Sala, etc.",
             })}
-            value={formData.complemento}
+            value={formData.complement}
             onChange={onChange}
           />
         </div>
 
         <FormField
-          id="bairro"
-          name="bairro"
+          id="neighborhood"
+          name="neighborhood"
           type="text"
           label={t("neighborhood", { defaultValue: "Bairro" })}
           placeholder={t("neighborhood_placeholder", {
             defaultValue: "Nome do bairro",
           })}
-          value={formData.bairro}
+          value={formData.neighborhood}
           onChange={onChange}
           required
         />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
-            id="cidade"
-            name="cidade"
+            id="town"
+            name="town"
             type="text"
             label={t("city", { defaultValue: "Cidade" })}
             placeholder={t("city_placeholder", {
               defaultValue: "Nome da cidade",
             })}
-            value={formData.cidade}
+            value={formData.town}
             onChange={onChange}
             required
           />
 
           <FormField
-            id="estado"
-            name="estado"
+            id="address_state"
+            name="address_state"
             type="text"
             label={t("state", { defaultValue: "Estado" })}
             placeholder="SP"
-            value={formData.estado}
+            value={formData.address_state}
             onChange={onChange}
             required
           />
         </div>
 
         <FormField
-          id="pais"
-          name="pais"
+          id="country"
+          name="country"
           type="text"
           label={t("country", { defaultValue: "País" })}
           placeholder={t("country_placeholder", {
             defaultValue: "Brasil",
           })}
-          value={formData.pais}
+          value={formData.country}
           onChange={onChange}
           required
         />
