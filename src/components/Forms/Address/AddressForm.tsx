@@ -22,7 +22,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
         zipcode: address.cep,
         address: address.logradouro,
         neighborhood: address.bairro,
-        town: address.localidade,
+        city: address.localidade,
         address_state: address.uf,
       },
       formData,
@@ -183,14 +183,14 @@ const AddressForm: React.FC<AddressFormProps> = ({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
-            id="town"
-            name="town"
+            id="city"
+            name="city"
             type="text"
             label={t("city", { defaultValue: "Cidade" })}
             placeholder={t("city_placeholder", {
               defaultValue: "Nome da cidade",
             })}
-            value={formData.town}
+            value={formData.city}
             onChange={onChange}
             required
           />

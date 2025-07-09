@@ -12,7 +12,7 @@ export interface UserAdminFormData {
   email: string;
   phone: string;
   password: string;
-  repeatPassword: string;
+  repeat_password: string;
   nickname: string;
   avatar: string;
   acceptance: boolean;
@@ -26,7 +26,7 @@ export interface AddressFormData {
   address_number: string;
   complement: string;
   neighborhood: string;
-  town: string;
+  city: string;
   address_state: string;
   country: string;
 }
@@ -105,7 +105,7 @@ export interface CepApiResponse {
 export interface ZipcodeData {
   address: string;
   neighborhood: string;
-  town: string;
+  city: string;
   address_state: string;
 }
 

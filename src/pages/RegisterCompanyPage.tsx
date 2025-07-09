@@ -18,28 +18,31 @@ export default function RegisterCompany() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<RegistrationFormData>({
+    /* Campos App Tenant */
     company_name: "",
     schema_name: "",
     document: "",
     logo: "",
     logoFile: undefined,
     logoType: "url",
+    registration_date: new Date().toISOString(),
+    /* Campos App UserManager */
     email: "",
     phone: "",
     password: "",
-    repeatPassword: "",
+    repeat_password: "",
     nickname: "",
     avatar: "",
     imageFile: undefined,
     imageType: "url",
     acceptance: false,
-    registration_date: new Date().toISOString(),
+    /* Campos App Address */
     zipcode: "",
     address: "",
     address_number: "",
     complement: "",
     neighborhood: "",
-    town: "",
+    city: "",
     address_state: "",
     country: "Brasil",
   });
@@ -163,7 +166,7 @@ export default function RegisterCompany() {
             address_number: formData.address_number,
             complement: formData.complement,
             neighborhood: formData.neighborhood,
-            town: formData.town,
+            city: formData.city,
             address_state: formData.address_state,
             country: formData.country,
           }}
@@ -181,7 +184,7 @@ export default function RegisterCompany() {
             email: formData.email,
             phone: formData.phone,
             password: formData.password,
-            repeatPassword: formData.repeatPassword,
+            repeat_password: formData.repeat_password,
             nickname: formData.nickname,
             avatar: formData.avatar,
             acceptance: formData.acceptance,

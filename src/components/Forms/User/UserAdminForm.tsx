@@ -159,7 +159,7 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
             name="repeatPassword"
             label={t("repeat_password", { defaultValue: "Repetir Senha" })}
             type="password"
-            value={formData.repeatPassword || ""}
+            value={formData.repeat_password || ""}
             onChange={onChange}
             placeholder={t("repeat_password_placeholder", "Confirme sua senha")}
             required

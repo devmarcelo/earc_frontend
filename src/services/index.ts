@@ -40,7 +40,7 @@ export const handleZipcodeApi = async (
     return {
       address: data.logradouro || "",
       neighborhood: data.bairro || "",
-      town: data.localidade || "",
+      city: data.localidade || "",
       address_state: data.uf || "",
     };
   } catch (error) {
