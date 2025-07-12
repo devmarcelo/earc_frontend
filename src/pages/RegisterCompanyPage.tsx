@@ -6,7 +6,6 @@ import { CompanyForm, UserAdminForm, AddressForm } from "../components/Forms";
 import type {
   AddressFormData,
   CompanyFormData,
-  ImageData,
   RegistrationFormData,
   UserAdminFormData,
 } from "../@types";
@@ -22,9 +21,7 @@ export default function RegisterCompany() {
     company_name: "",
     schema_name: "",
     document: "",
-    logo: "",
-    logoFile: undefined,
-    logoType: "url",
+    logo: undefined,
     registration_date: new Date().toISOString(),
     /* Campos App UserManager */
     email: "",
@@ -32,9 +29,7 @@ export default function RegisterCompany() {
     password: "",
     repeat_password: "",
     nickname: "",
-    avatar: "",
-    imageFile: undefined,
-    imageType: "url",
+    avatar: undefined,
     acceptance: false,
     /* Campos App Address */
     zipcode: "",
@@ -43,7 +38,7 @@ export default function RegisterCompany() {
     complement: "",
     neighborhood: "",
     city: "",
-    address_state: "",
+    state: "",
     country: "Brasil",
   });
 
@@ -83,12 +78,10 @@ export default function RegisterCompany() {
     }));
   };
 
-  const handleImageChange = (imageData: ImageData, key: "logo" | "image") => {
+  const handleImageChange = (image: File | string, key: "logo" | "avatar") => {
     setFormData((prev) => ({
       ...prev,
-      [key]: imageData.url,
-      [`${key}File`]: imageData.file,
-      [`${key}Type`]: imageData.type,
+      [key]: image,
     }));
   };
 
@@ -98,8 +91,13 @@ export default function RegisterCompany() {
 
     try {
       const data = new FormData();
+
       Object.entries(formData).forEach(([key, value]) => {
-        if (value instanceof File) {
+        if (typeof value === "undefined" || value === null) {
+          return;
+        }
+
+        if (value instanceof File || typeof value === "string") {
           data.append(key, value);
         } else {
           data.append(key, value?.toString() ?? "");
@@ -146,11 +144,9 @@ export default function RegisterCompany() {
             schema_name: formData.schema_name,
             document: formData.document,
             logo: formData.logo,
-            logoFile: formData.logoFile,
-            logoType: formData.logoType,
           }}
           onChange={handleChange}
-          onImageChange={(imageData) => handleImageChange(imageData, "logo")}
+          onImageChange={(image) => handleImageChange(image, "logo")}
           setFormData={setCompanyFormData}
         />
       ),
@@ -167,7 +163,7 @@ export default function RegisterCompany() {
             complement: formData.complement,
             neighborhood: formData.neighborhood,
             city: formData.city,
-            address_state: formData.address_state,
+            state: formData.state,
             country: formData.country,
           }}
           onChange={handleChange}
@@ -188,12 +184,10 @@ export default function RegisterCompany() {
             nickname: formData.nickname,
             avatar: formData.avatar,
             acceptance: formData.acceptance,
-            imageFile: formData.imageFile,
-            imageType: formData.imageType,
           }}
           onChange={handleChange}
           setFormData={setUserAdminFormData}
-          onImageChange={(imageData) => handleImageChange(imageData, "image")}
+          onImageChange={(image) => handleImageChange(image, "avatar")}
           loading={loading}
           error={error}
         />

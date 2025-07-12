@@ -78,7 +78,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/register-company" element={<RegisterCompany />} />
+      <Route path="/register-company/" element={<RegisterCompany />} />
 
       {/* Protected Routes using the ProtectedRoute component */}
       <Route

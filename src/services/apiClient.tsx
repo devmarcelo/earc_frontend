@@ -8,9 +8,6 @@ const API_BASE_URL =
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Interceptor to add the JWT token and Tenant ID to requests

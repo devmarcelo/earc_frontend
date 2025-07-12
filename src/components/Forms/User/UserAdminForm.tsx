@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ImageUploadModal, TermsModal, FormField } from "../../Shared";
+import {
+  ImageUploadModal,
+  TermsModal,
+  FormField,
+  FormFieldImage,
+} from "../../Shared";
 import { useModal } from "../../../hooks";
 import type { UserAdminFormProps, ImageData } from "../../../@types";
 import { formatPhone } from "../../../utils/formatters";
@@ -10,7 +15,6 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
   setFormData,
   onChange,
   error,
-  onImageChange,
 }) => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,19 +31,13 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
   };
 
   const handleImageSelect = (imageData: ImageData) => {
-    // Update form data with image information
-    if (onImageChange) {
-      onImageChange(imageData);
-    } else {
-      // Fallback: create synthetic event for image URL
-      const syntheticEvent = {
-        target: {
-          name: "avatar",
-          value: imageData.url,
-        },
-      } as React.ChangeEvent<HTMLInputElement>;
-      onChange(syntheticEvent);
-    }
+    const syntheticEvent = {
+      target: {
+        name: "avatar",
+        value: imageData.type === "file" ? imageData.file : imageData.url,
+      },
+    } as React.ChangeEvent<HTMLInputElement>;
+    onChange(syntheticEvent);
     setIsModalOpen(false);
   };
 
@@ -51,11 +49,6 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
       },
     } as React.ChangeEvent<HTMLInputElement>;
     onChange(syntheticEvent);
-
-    // Also clear file data if using onImageChange
-    if (onImageChange) {
-      onImageChange({ url: "", type: "url" });
-    }
   };
 
   const handleTermsLinkClick = (e: React.MouseEvent) => {
@@ -93,6 +86,10 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
 
   const handleTermsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
   };
 
   return (
@@ -155,8 +152,8 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
           />
 
           <FormField
-            id="repeatPassword"
-            name="repeatPassword"
+            id="repeat_password"
+            name="repeat_password"
             label={t("repeat_password", { defaultValue: "Repetir Senha" })}
             type="password"
             value={formData.repeat_password || ""}
@@ -182,88 +179,13 @@ const UserAdminForm: React.FC<UserAdminFormProps> = ({
         />
 
         {/* Profile Image Upload Section */}
-        <div>
-          <label
-            htmlFor="avatar"
-            className="ml-2 block text-left text-sm font-medium text-gray-700"
-          >
-            {t("profile_image", { defaultValue: "Foto de Perfil" })}
-          </label>
-
-          {/* Image Preview */}
-          {formData.avatar ? (
-            <div className="mt-2">
-              <div className="relative inline-block">
-                <img
-                  src={formData.avatar}
-                  alt="Profile preview"
-                  className="h-20 w-20 rounded-full border border-gray-300 bg-gray-50 object-cover"
-                  onError={(e) => {
-                    // Handle broken image - show default avatar
-                    const target = e.target as HTMLImageElement;
-                    target.src =
-                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAwLTQtNEg4YTQgNCAwIDAwLTQgNHYyIiBzdHJva2U9IiM5Q0E0QUYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxjaXJjbGUgY3g9IjEyIiBjeT0iNyIgcj0iNCIgc3Ryb2tlPSIjOUNBNEFGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K";
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={handleRemoveImage}
-                  className="absolute -top-1 -right-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none"
-                  title={t("remove_image", { defaultValue: "Remover foto" })}
-                >
-                  <svg
-                    className="h-3 w-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div className="mt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(true)}
-                  className="text-sm text-indigo-600 hover:text-indigo-500"
-                >
-                  {t("change_photo", { defaultValue: "Alterar foto" })}
-                </button>
-              </div>
-            </div>
-          ) : (
-            /* Upload Button */
-            <div className="mt-2">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                className="flex w-full items-center justify-center rounded-md border-2 border-dashed border-gray-300 px-6 py-3 text-sm font-medium text-gray-600 hover:border-gray-400 hover:text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none"
-              >
-                <svg
-                  className="mr-2 h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                {t("add_profile_photo", {
-                  defaultValue: "Adicionar foto de perfil",
-                })}
-              </button>
-            </div>
-          )}
-        </div>
+        <FormFieldImage
+          id="avatar"
+          label={t("profile_image", { defaultValue: "Foto de Perfil" })}
+          value={formData.avatar}
+          onOpenModal={handleOpenModal}
+          onRemove={handleRemoveImage}
+        />
 
         {/* Terms and Conditions */}
         <FormField

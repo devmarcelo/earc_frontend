@@ -11,7 +11,7 @@ interface ImageUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
   onImageSelect: (imageData: ImageData) => void;
-  currentImage?: string;
+  currentImage?: File | string;
   title?: string;
   acceptedFormats?: string;
   maxSizeText?: string;
@@ -30,9 +30,30 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"url" | "upload">("url");
-  const [urlInput, setUrlInput] = useState(currentImage || "");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>(currentImage || "");
+
+  const fileToUrl = (img: string | File | undefined) => {
+    if (!img) {
+      return "";
+    }
+
+    if (typeof img === "string") {
+      return img;
+    }
+
+    if (img instanceof File) {
+      return URL.createObjectURL(img);
+    }
+
+    return "";
+  };
+
+  const [urlInput, setUrlInput] = useState(
+    typeof currentImage === "string" ? currentImage : "",
+  );
+  const [selectedFile, setSelectedFile] = useState<File | null>(
+    currentImage instanceof File ? currentImage : null,
+  );
+  const [previewUrl, setPreviewUrl] = useState<string>(fileToUrl(currentImage));
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -144,13 +165,11 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
       }
       onImageSelect({ url: urlInput, type: "url" });
     } else if (activeTab === "upload" && selectedFile) {
-      // Convert file to base64 for preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        onImageSelect({ url: result, file: selectedFile, type: "file" });
-      };
-      reader.readAsDataURL(selectedFile);
+      onImageSelect({
+        url: fileToUrl(selectedFile),
+        file: selectedFile,
+        type: "file",
+      });
     }
     onClose();
   };
@@ -167,9 +186,9 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
 
   const resetModal = () => {
     setActiveTab("url");
-    setUrlInput(currentImage || "");
-    setSelectedFile(null);
-    setPreviewUrl(currentImage || "");
+    setUrlInput(typeof currentImage === "string" ? currentImage : "");
+    setSelectedFile(currentImage instanceof File ? currentImage : null);
+    setPreviewUrl(fileToUrl(currentImage));
     setError("");
     setIsLoading(false);
     if (fileInputRef.current) {
@@ -179,8 +198,8 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
 
   // Reset modal when it opens
   if (isOpen && !previewUrl && currentImage) {
-    setPreviewUrl(currentImage);
-    setUrlInput(currentImage);
+    setPreviewUrl(fileToUrl(currentImage));
+    setUrlInput(typeof currentImage === "string" ? currentImage : "");
   }
 
   if (!isOpen) return null;

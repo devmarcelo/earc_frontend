@@ -23,7 +23,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
         address: address.logradouro,
         neighborhood: address.bairro,
         city: address.localidade,
-        address_state: address.uf,
+        state: address.uf,
       },
       formData,
       setFormData,
@@ -196,12 +196,12 @@ const AddressForm: React.FC<AddressFormProps> = ({
           />
 
           <FormField
-            id="address_state"
-            name="address_state"
+            id="state"
+            name="state"
             type="text"
             label={t("state", { defaultValue: "Estado" })}
             placeholder="SP"
-            value={formData.address_state}
+            value={formData.state}
             onChange={onChange}
             required
           />

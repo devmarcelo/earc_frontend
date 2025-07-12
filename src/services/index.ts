@@ -41,7 +41,7 @@ export const handleZipcodeApi = async (
       address: data.logradouro || "",
       neighborhood: data.bairro || "",
       city: data.localidade || "",
-      address_state: data.uf || "",
+      state: data.uf || "",
     };
   } catch (error) {
     console.error("Erro ao buscar CEP:", error);

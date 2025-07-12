@@ -3,9 +3,7 @@ export interface CompanyFormData {
   company_name: string;
   schema_name: string;
   document: string;
-  logo: string;
-  logoFile?: File;
-  logoType?: "url" | "file";
+  logo: File | string | undefined;
 }
 
 export interface UserAdminFormData {
@@ -14,10 +12,8 @@ export interface UserAdminFormData {
   password: string;
   repeat_password: string;
   nickname: string;
-  avatar: string;
+  avatar: File | string | undefined;
   acceptance: boolean;
-  imageFile?: File;
-  imageType?: "url" | "file";
 }
 
 export interface AddressFormData {
@@ -27,7 +23,7 @@ export interface AddressFormData {
   complement: string;
   neighborhood: string;
   city: string;
-  address_state: string;
+  state: string;
   country: string;
 }
 
@@ -42,14 +38,14 @@ export interface BaseFormProps<T> {
 export interface CompanyFormProps extends BaseFormProps<CompanyFormData> {
   setFormData: (data: Partial<CompanyFormData>) => void;
   onNext?: () => void;
-  onImageChange?: (imageData: ImageData) => void;
+  onImageChange?: (image: File | string) => void;
 }
 
 export interface UserAdminFormProps extends BaseFormProps<UserAdminFormData> {
   setFormData: (data: Partial<UserAdminFormData>) => void;
   loading?: boolean;
   error?: string;
-  onImageChange?: (imageData: ImageData) => void;
+  onImageChange?: (image: File | string) => void;
 }
 
 export interface AddressFormProps extends BaseFormProps<AddressFormData> {
@@ -106,7 +102,7 @@ export interface ZipcodeData {
   address: string;
   neighborhood: string;
   city: string;
-  address_state: string;
+  state: string;
 }
 
 // Hook Return Types
