@@ -67,14 +67,14 @@ const CompanyForm: React.FC<CompanyFormProps> = ({
 
       <form id="company-form" onSubmit={handleSubmit} className="space-y-4">
         <FormField
-          id="company_name"
-          name="company_name"
+          id="name"
+          name="name"
           type="text"
           label={t("company_name", { defaultValue: "Nome da Empresa" })}
           placeholder={t("company_name_placeholder", {
             defaultValue: "Digite o nome da sua empresa",
           })}
-          value={formData.company_name}
+          value={formData.name}
           onChange={onChange}
           required
         />

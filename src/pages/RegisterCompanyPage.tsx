@@ -18,7 +18,7 @@ export default function RegisterCompany() {
 
   const [formData, setFormData] = useState<RegistrationFormData>({
     /* Campos App Tenant */
-    company_name: "",
+    name: "",
     schema_name: "",
     document: "",
     logo: undefined,
@@ -140,7 +140,7 @@ export default function RegisterCompany() {
       component: (
         <CompanyForm
           formData={{
-            company_name: formData.company_name,
+            name: formData.name,
             schema_name: formData.schema_name,
             document: formData.document,
             logo: formData.logo,

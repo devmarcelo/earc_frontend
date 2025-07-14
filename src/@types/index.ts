@@ -1,6 +1,6 @@
 // Form Data Types
 export interface CompanyFormData {
-  company_name: string;
+  name: string;
   schema_name: string;
   document: string;
   logo: File | string | undefined;
