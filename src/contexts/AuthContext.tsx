@@ -1,11 +1,10 @@
-import React, {
+import {
   createContext,
   useState,
   useContext,
   useEffect,
   type ReactNode,
 } from "react";
-import apiClient from "../services/apiClient"; // Assuming apiClient handles token logic
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -18,7 +17,6 @@ interface AuthState {
 interface AuthContextProps extends AuthState {
   login: (token: string, userData: any) => void;
   logout: () => void;
-  // loadAuthData: () => void; // Function to load from localStorage on init
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -92,10 +90,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     // Redirect to login handled by ProtectedRoute or response interceptor
   };
-
-  // const loadAuthData = () => {
-  //   // Logic moved to useEffect
-  // };
 
   return (
     <AuthContext.Provider value={{ ...authState, login, logout }}>

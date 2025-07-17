@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
-import apiClient from "../services/apiClient";
+import { login as loginService } from "../services/loginService";
+import { useTenant } from "../contexts/TenantContext";
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { setTenant } = useTenant();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -24,44 +25,23 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // 1. Obtain JWT token
-      const tokenResponse = await apiClient.post("/api/v1/auth/", {
+      const { token, refresh, user, tenant } = await loginService({
         email,
         password,
       });
-      const { access: token } = tokenResponse.data;
+      login(token, user); // Atualiza o Auth Context
+      setTenant(tenant);
 
-      if (!token) {
-        throw new Error("Token not received");
-      }
-
-      // 2. Fetch user data with the new token
-      const tempApiClient = axios.create({
-        baseURL: apiClient.defaults.baseURL,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Adjust endpoint as needed. This endpoint should return user details including tenant info.
-      const userResponse = await tempApiClient.get("/auth/user/me/");
-      const userData = userResponse.data;
-
-      // 3. Update Auth Context
-      login(token, userData);
-
-      // 4. Redirect to the intended page or dashboard
+      // Redireciona normalmente
       navigate(from, { replace: true });
     } catch (err: any) {
       console.error("Login failed:", err);
       setError(
         t("login_failed", {
-          defaultValue: "Login failed. Please check your credentials.",
+          defaultValue: "Falha no login. Verifique suas credenciais.",
         }),
       );
-      // Clear any potentially stored invalid data
-      localStorage.removeItem("tempAuthToken");
+      // Limpa storage por segurança
       localStorage.removeItem("authToken");
       localStorage.removeItem("userData");
       localStorage.removeItem("tenantId");

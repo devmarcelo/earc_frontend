@@ -1,10 +1,11 @@
 import axios from "axios";
-import { type PaginatedResponse } from "../components/Audit/types";
 
 // Determine the base URL for the API
 // Use environment variable in production, fallback to localhost for development
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/";
+const hostProtocol = window.location.protocol;
+const hostName = window.location.hostname;
+const baseURL = `${hostProtocol}//${hostName}:8000`;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || baseURL;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -13,16 +14,17 @@ const apiClient = axios.create({
 // Interceptor to add the JWT token and Tenant ID to requests
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authToken"); // Or get from auth context
-    const tenantId = localStorage.getItem("tenantId"); // Or get from tenant context/URL
+    const token = localStorage.getItem("authToken");
+    const tenantId = localStorage.getItem("tenantId");
 
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
+
     if (tenantId) {
-      // Adjust header name if different in your backend middleware
       config.headers["X-Tenant-Id"] = tenantId;
     }
+
     return config;
   },
   (error) => {
@@ -32,16 +34,11 @@ apiClient.interceptors.request.use(
 
 // Interceptor to handle responses (e.g., redirect on 401)
 apiClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Handle unauthorized access, e.g., redirect to login
+    if (error.response?.status === 401) {
       console.error("Unauthorized access - redirecting to login");
-      localStorage.removeItem("authToken"); // Clear token
-      localStorage.removeItem("tenantId"); // Clear tenant info
-      // Use window.location or router history to redirect
+      localStorage.removeItem("authToken");
       window.location.href = "/login";
     }
     return Promise.reject(error);

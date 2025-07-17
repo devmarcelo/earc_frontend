@@ -6,16 +6,19 @@ import "./i18n.ts"; // Initialize i18next
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 import { ThemeProvider } from "./contexts/ThemeContext.tsx";
+import { TenantProvider } from "./contexts/TenantContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <React.Suspense fallback="loading translations...">
-        <AuthProvider>
-          <ThemeProvider>
-            <App />
-          </ThemeProvider>
-        </AuthProvider>
+        <TenantProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
+          </AuthProvider>
+        </TenantProvider>
       </React.Suspense>
     </BrowserRouter>
   </React.StrictMode>,

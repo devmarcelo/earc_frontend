@@ -117,3 +117,18 @@ export interface UseZipcodeReturn {
   ) => Promise<void>;
   validateZipcode: (value: string) => string | null;
 }
+
+export interface Tenant {
+  id: number;
+  schema_name: string;
+  domain: string;
+  name: string;
+  [key: string]: any;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  [key: string]: any;
+}
