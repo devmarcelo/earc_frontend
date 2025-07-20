@@ -1,4 +1,5 @@
 // Shared Components
+export { default as Button } from "./Button";
 export { default as ImageUploadModal } from "./ImageUploadModal";
 export { default as FormField } from "./FormField";
 export { default as FormFieldImage } from "./FormFieldImage";

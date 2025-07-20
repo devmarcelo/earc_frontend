@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import { useGoogleLogin } from "@react-oauth/google";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { login as loginService } from "../services/loginService";
 import { useTenant } from "../contexts/TenantContext";
+import SocialLoginButton from "../components/Shared/Social/SocialLoginButton";
+import { googleLogin } from "../services/googleLoginService";
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -15,6 +18,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
 
   // Get the location to redirect to after login
   const from = location.state?.from?.pathname || "/";
@@ -49,6 +53,44 @@ const LoginPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  const handleGoogleLogin = async (tokenResponse: { code: string }) => {
+    setIsLoadingGoogle(true);
+    setError(null);
+    try {
+      const { access, user, tenant } = await googleLogin({
+        code: tokenResponse.code,
+      });
+      login(access, user);
+      setTenant(tenant);
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      setError(
+        t("login_google_failed", {
+          defaultValue:
+            "Falha no login Google. Usuário não autorizado ou não cadastrado.",
+        }),
+      );
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userData");
+      localStorage.removeItem("tenantId");
+    } finally {
+      setIsLoadingGoogle(false);
+    }
+  };
+
+  const googleLoginHandler = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: handleGoogleLogin,
+    onError: () =>
+      setError(
+        t("login_google_failed", {
+          defaultValue:
+            "Falha no login Google. Usuário não autorizado ou não cadastrado.",
+        }),
+      ),
+    scope: "openid email profile",
+  });
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
@@ -163,6 +205,12 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-3">
+            <SocialLoginButton
+              provider="google"
+              loading={isLoadingGoogle}
+              onClick={() => googleLoginHandler()}
+            />
+            {/**
             <button
               type="button"
               className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
@@ -186,7 +234,8 @@ const LoginPage: React.FC = () => {
                 />
               </svg>
               <span className="ml-2">Google</span>
-            </button>
+            </button> 
+            */}
 
             {/* Botão do GitHub desativado
             <button
