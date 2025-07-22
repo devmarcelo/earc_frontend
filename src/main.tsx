@@ -13,18 +13,18 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <BrowserRouter>
-        <React.Suspense fallback="loading translations...">
-          <TenantProvider>
-            <AuthProvider>
-              <ThemeProvider>
-                <App />
-              </ThemeProvider>
-            </AuthProvider>
-          </TenantProvider>
-        </React.Suspense>
-      </BrowserRouter>
-    </GoogleOAuthProvider>
+    {/*<GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>*/}
+    <BrowserRouter>
+      <React.Suspense fallback="loading translations...">
+        <TenantProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
+          </AuthProvider>
+        </TenantProvider>
+      </React.Suspense>
+    </BrowserRouter>
+    {/*</GoogleOAuthProvider>*/}
   </React.StrictMode>,
 );

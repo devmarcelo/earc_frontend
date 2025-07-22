@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import type { Tenant } from "../@types";
 import {
   createContext,
@@ -17,21 +18,23 @@ const TenantContext = createContext<TenantContextType | undefined>(undefined);
 
 export const TenantProvider = ({ children }: { children: ReactNode }) => {
   const [tenant, setTenantState] = useState<Tenant | null>(null);
+  const location = useLocation();
 
-  // Salva no localStorage e sincroniza com o state
   useEffect(() => {
-    const storedTenant = localStorage.getItem("tenant");
-    if (storedTenant) {
-      setTenantState(JSON.parse(storedTenant));
+    const pathTenant = location.pathname.split("/")[1];
+
+    if (pathTenant && (!tenant || tenant?.schema_name !== pathTenant)) {
+      setTenantState({ ...tenant, schema_name: pathTenant } as Tenant);
+      localStorage.setItem("tenantId", pathTenant);
     }
-  }, []);
+  }, [location]);
 
   const setTenant = (tenant: Tenant | null) => {
     setTenantState(tenant);
     if (tenant) {
-      localStorage.setItem("tenant", JSON.stringify(tenant));
+      localStorage.setItem("tenantId", tenant.schema_name);
     } else {
-      localStorage.removeItem("tenant");
+      localStorage.removeItem("tenantId");
     }
   };
 

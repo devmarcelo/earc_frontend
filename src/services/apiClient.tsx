@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useErrorStore, type ErrorData } from "../hooks/useErrorStore";
 
 // Determine the base URL for the API
 // Use environment variable in production, fallback to localhost for development
@@ -10,6 +11,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || baseURL;
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
 });
+
+const setErrorAndRedirect = (errorData: ErrorData) => {
+  useErrorStore.getState().setError(errorData);
+  window.location.href = "/error";
+};
 
 // Interceptor to add the JWT token and Tenant ID to requests
 apiClient.interceptors.request.use(
@@ -36,11 +42,57 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      console.error("Unauthorized access - redirecting to login");
+    const status = error.response?.status;
+    const url = error.config?.url;
+    const from = window.location.pathname; //router.location
+
+    if (status === 401) {
+      setErrorAndRedirect({
+        status: 401,
+        title: "Acesso não autorizado",
+        message: "Sua sessão expirou ou você não tem permissão.",
+        from: from,
+      });
       localStorage.removeItem("authToken");
-      window.location.href = "/login";
+      return;
     }
+
+    if (status === 403) {
+      setErrorAndRedirect({
+        status: 403,
+        title: "Acesso proibido",
+        message: "Você não tem permissão para acessar este recurso.",
+        from: from,
+      });
+      return;
+    }
+
+    if (status === 404) {
+      let errorData: ErrorData = { status: 404, from: from };
+
+      if (url?.includes("/public-settings/")) {
+        errorData.title = "Empresa não encontrada";
+        errorData.message =
+          "O endereço de empresa informado não existe ou está inativo.";
+      } else {
+        errorData.title = "Recurso não encontrado";
+        errorData.message = "Página ou recurso não existe.";
+      }
+
+      setErrorAndRedirect(errorData);
+      return;
+    }
+
+    if (status >= 500) {
+      setErrorAndRedirect({
+        status: 500,
+        title: "Erro interno",
+        message: "Ocorreu um erro inesperado.",
+        from: from,
+      });
+      return;
+    }
+
     return Promise.reject(error);
   },
 );
