@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useGoogleLogin } from "@react-oauth/google";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useLocation, useParams, data } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { login as loginService } from "../services/loginService";
 import { useTenant } from "../contexts/TenantContext";
-import SocialLoginButton from "../components/Shared/Social/SocialLoginButton";
-import { googleLogin } from "../services/googleLoginService";
 import type { Tenant } from "../@types";
 import { fetchPublicTenantSettings } from "../services/tenantService";
 
@@ -19,9 +16,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
-  const { tenant: tenantFromContext, setTenant } = useTenant();
-  const { tenant: tenantSlug } = useParams<{ tenant: string }>();
+  const { setTenant } = useTenant();
   const [branding, setBranding] = useState<Tenant | null>(null);
 
   useEffect(() => {
@@ -74,45 +69,6 @@ const LoginPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  /*const handleGoogleLogin = async (tokenResponse: { code: string }) => {
-    setIsLoadingGoogle(true);
-    setError(null);
-
-    try {
-      const { access, user, tenant } = await googleLogin({
-        code: tokenResponse.code,
-      });
-
-      login(access, user);
-      setTenant(tenant);
-      navigate(from, { replace: true });
-    } catch (err: any) {
-      setError(
-        t("login_google_failed", {
-          defaultValue:
-            "Falha no login Google. Usuário não autorizado ou não cadastrado.",
-        }),
-      );
-
-      clearLocalStorage();
-    } finally {
-      setIsLoadingGoogle(false);
-    }
-  };
-
-  const googleLoginHandler = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: handleGoogleLogin,
-    onError: () =>
-      setError(
-        t("login_google_failed", {
-          defaultValue:
-            "Falha no login Google. Usuário não autorizado ou não cadastrado.",
-        }),
-      ),
-    scope: "openid email profile",
-  });*/
 
   return (
     <div
@@ -228,29 +184,6 @@ const LoginPage: React.FC = () => {
             </button>
           </div>
         </form>
-
-        {/*
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-2 text-gray-500">
-                {t("or_continue_with", { defaultValue: "Ou continue com" })}
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 gap-3">
-            <SocialLoginButton
-              provider="google"
-              loading={isLoadingGoogle}
-              onClick={() => googleLoginHandler()}
-            />
-          </div>
-        </div>
-        */}
 
         {/* Link para cadastro de empresa */}
         <div className="mt-4 text-center">

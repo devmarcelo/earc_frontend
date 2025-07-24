@@ -5,7 +5,6 @@ import MainLayout from "./components/Layout/MainLayout";
 import LoginPage from "./pages/LoginPage";
 import RegisterCompany from "./pages/RegisterCompanyPage";
 import { useAuth } from "./contexts/AuthContext";
-import ErrorPage from "./pages/ErrorPage";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -137,7 +136,6 @@ export default function AppRoutes() {
       />
 
       {/* Fallback: redireciona para login */}
-      <Route path="/error" element={<ErrorPage />} />
     </Routes>
   );
 }

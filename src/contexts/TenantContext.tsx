@@ -21,11 +21,11 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
 
   useEffect(() => {
-    const pathTenant = location.pathname.split("/")[1];
+    const schema_name = window.location.hostname.split(".")[0];
 
-    if (pathTenant && (!tenant || tenant?.schema_name !== pathTenant)) {
-      setTenantState({ ...tenant, schema_name: pathTenant } as Tenant);
-      localStorage.setItem("tenantId", pathTenant);
+    if (schema_name && (!tenant || tenant?.schema_name !== schema_name)) {
+      setTenantState({ ...tenant, schema_name: schema_name } as Tenant);
+      localStorage.setItem("tenantId", schema_name);
     }
   }, [location]);
 

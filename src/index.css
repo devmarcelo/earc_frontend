@@ -20,3 +20,19 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
 }
+
+.toast-bg-color-success {
+  background-color: var(--color-green-100);
+}
+
+.toast-bg-color-error {
+  background-color: var(--color-red-100);
+}
+
+.toast-bg-color-info {
+  background-color: var(--color-cyan-100);
+}
+
+.toast-bg-color-warning {
+  background-color: var(--color-yellow-100);
+}

@@ -1,5 +1,8 @@
 import apiClient from "./apiClient";
 import type { Tenant } from "../@types";
+import { useToastStore } from "../hooks/useToastStore";
+
+const showToast = useToastStore.getState().showToast;
 
 export interface TenantBranding {
   name: string;
@@ -29,8 +32,19 @@ export async function fetchPublicTenantSettings(slug: string): Promise<Tenant> {
   const res = await apiClient.get(`/api/v1/tenants/${slug}/public-settings/`);
 
   if (!isTenantBranding(res.data)) {
-    throw new Error("Dados de branding do tenant inválidos.");
+    showToast({
+      type: "error",
+      title: "Erro de branding",
+      message: "Dados da empresa inválidos.",
+    });
+    throw new Error("Dados de branding do tenant inválidos. Verifique a URL.");
   }
+
+  showToast({
+    type: "success",
+    title: "Empresa encontrada",
+    message: `Bem-vindo ${res.data.name}.`,
+  });
 
   return res.data as Tenant;
 }

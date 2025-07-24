@@ -1,21 +1,17 @@
 import axios from "axios";
-import { useErrorStore, type ErrorData } from "../hooks/useErrorStore";
+import { useToastStore, type ToastMessage } from "../hooks/useToastStore";
 
 // Determine the base URL for the API
 // Use environment variable in production, fallback to localhost for development
 const hostProtocol = window.location.protocol;
-const hostName = window.location.hostname;
-const baseURL = `${hostProtocol}//${hostName}:8000`;
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || baseURL;
+const schema_name = window.location.hostname.split(".")[0];
+const API_BASE_URL = `${hostProtocol}//${schema_name}.${import.meta.env.VITE_API_BASE_URL}`;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
 });
 
-const setErrorAndRedirect = (errorData: ErrorData) => {
-  useErrorStore.getState().setError(errorData);
-  window.location.href = "/error";
-};
+const showToast = useToastStore.getState().showToast;
 
 // Interceptor to add the JWT token and Tenant ID to requests
 apiClient.interceptors.request.use(
@@ -44,51 +40,59 @@ apiClient.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
     const url = error.config?.url;
-    const from = window.location.pathname; //router.location
+    const duration = 1000;
 
     if (status === 401) {
-      setErrorAndRedirect({
-        status: 401,
-        title: "Acesso não autorizado",
+      showToast({
+        type: "error",
+        title: "401 - Acesso não autorizado",
         message: "Sua sessão expirou ou você não tem permissão.",
-        from: from,
+        duration: duration,
       });
       localStorage.removeItem("authToken");
       return;
     }
 
     if (status === 403) {
-      setErrorAndRedirect({
-        status: 403,
-        title: "Acesso proibido",
+      showToast({
+        type: "error",
+        title: "403 - Acesso proibido",
         message: "Você não tem permissão para acessar este recurso.",
-        from: from,
+        duration: duration,
       });
       return;
     }
 
     if (status === 404) {
-      let errorData: ErrorData = { status: 404, from: from };
+      let toastMessage: ToastMessage = { type: "error", message: "" };
 
       if (url?.includes("/public-settings/")) {
-        errorData.title = "Empresa não encontrada";
-        errorData.message =
+        toastMessage.title = "404 - Empresa não encontrada";
+        toastMessage.message =
           "O endereço de empresa informado não existe ou está inativo.";
       } else {
-        errorData.title = "Recurso não encontrado";
-        errorData.message = "Página ou recurso não existe.";
+        toastMessage.title = "Recurso não encontrado";
+        toastMessage.message = "Página ou recurso não existe.";
       }
 
-      setErrorAndRedirect(errorData);
+      showToast(toastMessage);
+      return;
+    }
+
+    if (status === 429) {
+      showToast({
+        type: "error",
+        title: "429 - Muitas solicitações",
+        message: "Erro ao processar requisição.",
+      });
       return;
     }
 
     if (status >= 500) {
-      setErrorAndRedirect({
-        status: 500,
-        title: "Erro interno",
+      showToast({
+        type: "error",
+        title: "500 - Erro interno",
         message: "Ocorreu um erro inesperado.",
-        from: from,
       });
       return;
     }
