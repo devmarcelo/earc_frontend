@@ -38,16 +38,23 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = error.response?.status;
+    const status = error.response?.status || 404;
     const url = error.config?.url;
-    const duration = 1000;
+
+    if (status === 400) {
+      showToast({
+        type: "error",
+        title: "400 - Dados inválidos",
+        message: "Recurso não encontrado no sistema.",
+      });
+      return;
+    }
 
     if (status === 401) {
       showToast({
         type: "error",
         title: "401 - Acesso não autorizado",
         message: "Sua sessão expirou ou você não tem permissão.",
-        duration: duration,
       });
       localStorage.removeItem("authToken");
       return;
@@ -58,7 +65,6 @@ apiClient.interceptors.response.use(
         type: "error",
         title: "403 - Acesso proibido",
         message: "Você não tem permissão para acessar este recurso.",
-        duration: duration,
       });
       return;
     }

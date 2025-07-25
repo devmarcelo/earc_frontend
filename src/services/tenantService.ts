@@ -31,7 +31,7 @@ function isTenantBranding(obj: any): obj is TenantBranding {
 export async function fetchPublicTenantSettings(slug: string): Promise<Tenant> {
   const res = await apiClient.get(`/api/v1/tenants/${slug}/public-settings/`);
 
-  if (!isTenantBranding(res.data)) {
+  if (!isTenantBranding(res.data.data)) {
     showToast({
       type: "error",
       title: "Erro de branding",
@@ -46,5 +46,5 @@ export async function fetchPublicTenantSettings(slug: string): Promise<Tenant> {
     message: `Bem-vindo ${res.data.name}.`,
   });
 
-  return res.data as Tenant;
+  return res.data.data as Tenant;
 }
