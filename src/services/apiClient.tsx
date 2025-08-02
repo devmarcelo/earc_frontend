@@ -42,11 +42,17 @@ apiClient.interceptors.response.use(
     const url = error.config?.url;
 
     if (status === 400) {
-      showToast({
-        type: "error",
-        title: "400 - Dados inválidos",
-        message: "Recurso não encontrado no sistema.",
-      });
+      let toastMessage: ToastMessage = { type: "error", message: "" };
+
+      if (url?.includes("/login/")) {
+        toastMessage.title = "Falha no login";
+        toastMessage.message = "Verifique suas credenciais.";
+      } else {
+        toastMessage.title = "400 - Dados inválidos";
+        toastMessage.message = "Recurso não encontrado no sistema.";
+      }
+
+      showToast(toastMessage);
       return;
     }
 

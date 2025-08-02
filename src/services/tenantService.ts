@@ -43,7 +43,7 @@ export async function fetchPublicTenantSettings(slug: string): Promise<Tenant> {
   showToast({
     type: "success",
     title: "Empresa encontrada",
-    message: `Bem-vindo ${res.data.name}.`,
+    message: `Bem-vindo ${res.data.data.name}.`,
   });
 
   return res.data.data as Tenant;
