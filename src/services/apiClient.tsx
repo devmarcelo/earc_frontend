@@ -5,7 +5,11 @@ import { useToastStore, type ToastMessage } from "../hooks/useToastStore";
 // Use environment variable in production, fallback to localhost for development
 const hostProtocol = window.location.protocol;
 const schema_name = window.location.hostname.split(".")[0];
-const API_BASE_URL = `${hostProtocol}//${schema_name}.${import.meta.env.VITE_API_BASE_URL}`;
+const isDev = import.meta.env.DEV;
+
+const API_BASE_URL = isDev
+  ? `${hostProtocol}//${window.location.hostname}:8000`
+  : `${hostProtocol}//${schema_name}.${import.meta.env.VITE_API_BASE_URL}`;
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

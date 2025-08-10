@@ -127,6 +127,16 @@ const LoginPage: React.FC = () => {
             maxlength={16}
           />
 
+          <div className="-mt-2 mb-4 flex justify-end">
+            <button
+              type="button"
+              className="text-sm text-indigo-600 hover:underline"
+              onClick={() => navigate("/forgot-password")}
+            >
+              {t("forgot_password", { defaultValue: "Esqueceu a senha?" })}
+            </button>
+          </div>
+
           <div>
             <Button
               type="submit"

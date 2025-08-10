@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import MainLayout from "./components/Layout/MainLayout";
 import LoginPage from "./pages/LoginPage";
 import RegisterCompany from "./pages/RegisterCompanyPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import { useAuth } from "./contexts/AuthContext";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -78,6 +80,8 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/register-company" element={<RegisterCompany />} />
 
       {/* Rotas protegidas multitenant */}
