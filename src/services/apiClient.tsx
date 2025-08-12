@@ -1,34 +1,100 @@
 import axios from "axios";
 import { useToastStore, type ToastMessage } from "../hooks/useToastStore";
 
-// Determine the base URL for the API
-// Use environment variable in production, fallback to localhost for development
-const hostProtocol = window.location.protocol;
-const schema_name = window.location.hostname.split(".")[0];
+const { protocol, hostname } = window.location;
+const schema_name = hostname.split(".")[0];
 const isDev = import.meta.env.DEV;
 
-const API_BASE_URL = isDev
-  ? `${hostProtocol}//${window.location.hostname}:8000`
-  : `${hostProtocol}//${schema_name}.${import.meta.env.VITE_API_BASE_URL}`;
+const PUBLIC_API_BASE_URL = isDev
+  ? `${protocol}//${(import.meta.env.VITE_PUBLIC_API_HOST as string) ?? "localhost"}:8000`
+  : `${protocol}//${import.meta.env.VITE_API_BASE_URL}`;
+
+const TENANT_API_BASE_URL = isDev
+  ? `${protocol}//${hostname}:8000`
+  : `${protocol}//${schema_name}.${import.meta.env.VITE_API_BASE_URL}`;
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  timeout: 30000,
 });
 
 const showToast = useToastStore.getState().showToast;
 
+// Define public endpoints
+const isPublicEndpoints = (url?: string) => {
+  if (!url) {
+    return false;
+  }
+
+  if (/^https?:\/\//i.test(url)) {
+    return false;
+  }
+
+  if (url.startsWith("/register-company") || url === "/register-company") {
+    return true;
+  }
+
+  return false;
+};
+
 // Interceptor to add the JWT token and Tenant ID to requests
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authToken");
-    const tenantId = localStorage.getItem("tenantId");
+    const token = localStorage.getItem("authToken") || undefined;
+    const tenantId = localStorage.getItem("tenantId") || undefined;
+    const url = config.url ?? "";
 
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+    if (!config.headers) {
+      config.headers = {} as import("axios").AxiosRequestHeaders;
     }
 
-    if (tenantId) {
-      config.headers["X-Tenant-Id"] = tenantId;
+    const isFormData =
+      typeof FormData !== "undefined" && config.data instanceof FormData;
+
+    if (isFormData && "Content-Type" in config.headers) {
+      delete (config.headers as import("axios").AxiosRequestHeaders)[
+        "Content-Type"
+      ];
+    }
+
+    if (!("Accept" in config.headers)) {
+      (config.headers as import("axios").AxiosRequestHeaders)["Accept"] =
+        "application/json";
+    }
+
+    if (!/^https?:\/\//i.test(url)) {
+      if (isPublicEndpoints(url)) {
+        config.baseURL = PUBLIC_API_BASE_URL;
+        delete config.headers["Authorization"];
+        delete config.headers["X-Tenant-Id"];
+      } else {
+        config.baseURL = TENANT_API_BASE_URL;
+
+        if (token) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        if (tenantId) {
+          config.headers["X-Tenant-Id"] = tenantId;
+        }
+      }
+    } else {
+      if (isPublicEndpoints(url)) {
+        if (token) {
+          config.headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        if (tenantId) {
+          config.headers["X-Tenant-Id"] = tenantId;
+        }
+      }
+    }
+
+    if (isDev) {
+      console.log(
+        "[api] ->",
+        config.method?.toUpperCase(),
+        (config.baseURL ?? "") + (config.url ?? ""),
+      );
     }
 
     return config;

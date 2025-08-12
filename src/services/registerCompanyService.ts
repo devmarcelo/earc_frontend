@@ -2,7 +2,7 @@ import apiClient from "./apiClient";
 
 export const registerCompany = async (formData: FormData): Promise<string> => {
   try {
-    const response = await apiClient.post("/api/register-company/", formData);
+    const response = await apiClient.post("/register-company/", formData);
 
     return response.data;
   } catch (error: any) {
