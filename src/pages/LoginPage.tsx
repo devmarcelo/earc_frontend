@@ -23,7 +23,7 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     const schema_name = window.location.hostname.split(".")[0];
 
-    if (schema_name) {
+    if (schema_name && schema_name !== import.meta.env.VITE_PUBLIC_API_HOST) {
       fetchPublicTenantSettings(schema_name)
         .then((data) => {
           setBranding(data);
